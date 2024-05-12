@@ -17,10 +17,6 @@ return [
         'guard' => 'web',
         'passwords' => 'users',
     ],
-    // 'admin'=>[
-    //     'driver'=>'eloquent',
-    //     'model'=> App\Models\Admin::class,
-    //  ],
 
     /*
     |--------------------------------------------------------------------------
@@ -44,13 +40,8 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'hash' => false,
-        ],
         'admin' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'admins',
         ],
     ],
@@ -77,11 +68,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
-        'admins'=>[
-            'driver'=>'eloquent',
-            'model'=>App\Models\Admin::class,
-         ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
 
         // 'users' => [
         //     'driver' => 'database',
@@ -115,9 +105,11 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        'admins'=>[
-            'driver'=>'eloquent',
-            'model'=>App\Models\Admin::class,
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'admins_password_resets',
+            'expire' => 60,
+            'throttle' => 60,
         ],
     ],
 
