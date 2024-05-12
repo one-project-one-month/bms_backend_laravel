@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AdminAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +19,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::middleware(['auth:admins'])->group(function () {
+    
+
+});
+
+Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
+
 Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
 
+    
 
 });
