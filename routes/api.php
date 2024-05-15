@@ -23,11 +23,13 @@ use App\Http\Controllers\Admin\AdminAuthController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
 Auth::routes();
 Route::post('user/login',[LoginController::class,'login']);
 Route::post('user/register',[UserController::class,'store']);
 
+    
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
     Route::middleware(['admin_auth'])->group(function() {
