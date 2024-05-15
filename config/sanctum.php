@@ -33,7 +33,7 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    'guard' => ['web','admins'],
 
     /*
     |--------------------------------------------------------------------------
@@ -79,5 +79,8 @@ return [
         'encrypt_cookies' => App\Http\Middleware\EncryptCookies::class,
         'verify_csrf_token' => App\Http\Middleware\VerifyCsrfToken::class,
     ],
+
+    // 'guard' => 'admin-api'
+
 
 ];
