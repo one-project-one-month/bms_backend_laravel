@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminAuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\AdminAuthController;
 // use App\Http\Controllers\Auth\LoginController;
 
 /*
@@ -23,11 +24,9 @@ use App\Http\Controllers\Auth\LoginController;
 //     return $request->user();
 // });
 
-Route::get('user', function() {
-    return "This is user home";
-});
-Route::post('/login',[LoginController::class,'login']);
-Route::post('register',[UserController::class,'store']);
+Auth::routes();
+Route::post('user/login',[LoginController::class,'login']);
+Route::post('user/register',[UserController::class,'store']);
 
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
@@ -36,6 +35,7 @@ Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
             Route::get('admin',[AdminController::class,'index']);
         });
     });
+    Route::get('userlist',[UserController::class,'index']);
     // Route::gourp(['prefix'=>'admin','middleware' => 'auth:admin'],function() {
     //     Route::get('admin',[AdminController::class,'index']);
     // });
@@ -54,6 +54,7 @@ Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
             Route::get('home', function() {
                 return "This is user home";
             });
+
             // Route::get('welcome', function() {
             //     return "Welcome";
             // });

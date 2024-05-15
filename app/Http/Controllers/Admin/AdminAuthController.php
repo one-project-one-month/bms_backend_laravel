@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\AdminLoginRequest;
-use App\Models\Admin;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Admin;
 use Laravel\Sanctum\HasApiTokens;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\AdminLoginRequest;
+use Illuminate\Notifications\Notifiable;
+use App\Http\Controllers\Admin\AdminAuthController;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AdminAuthController extends Controller
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-   
+
 
     public function login(AdminLoginRequest $request)
     {
-        
+
         try {
-           
+
             $validated = $request->validated();
             $admin = Admin::where('name', $validated['name'])->first();
 
@@ -31,7 +32,7 @@ class AdminAuthController extends Controller
                     'message' => 'Cannot Login',
                 ], 401);
             }
-    
+
 
             return response()->json([
                 'status' => true,
