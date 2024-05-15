@@ -18,10 +18,10 @@ class TownshipSeeder extends Seeder
 
         foreach($towns as $town){
             Township::query()->updateOrCreate([
-                'TownshipId' => $town['TownshipId'],
-                'TownshipCode' => $town['TownshipCode'],
-                'TownshipName' => $town['TownshipName'],
-                'StateCode' => $town['StateCode']
+                'townshipId' => $town['TownshipId'],
+                'townshipCode' => $town['TownshipCode'],
+                'townshipName' => $town['TownshipName'],
+                'stateCode' => $town['StateCode']
             ]);
         }
     }

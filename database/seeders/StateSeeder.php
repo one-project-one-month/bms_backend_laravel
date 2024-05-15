@@ -20,8 +20,8 @@ class StateSeeder extends Seeder
         foreach($jsonData as $state){
             State::query()->updateOrCreate([
                 // 'StateId' => $state['StateId'],
-                'StateCode' => $state['StateCode'],
-                'StateName' => $state['StateName']
+                'stateCode' => $state['StateCode'],
+                'stateName' => $state['StateName']
             ]);
         }
     }
