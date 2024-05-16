@@ -30,13 +30,14 @@ Route::get('user', function() {
 Route::post('/login',[LoginController::class,'login']);
 Route::post('register',[UserController::class,'store']);
 
+ 
     
 
 Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
-    Route::middleware(['admin_auth'])->group(function() {
-        Route::prefix('admin')->group(function(){
-            Route::get('admin',[AdminController::class,'index']);
-        });
+    Route::middleware(['admin_auth'])->prefix('admin')->group(function() {
+       Route::get('/user_accept_or_reject', [AdminController::class, 'getAllPendingUsers']);
+       Route::patch('/user_accept_or_reject/{accountNo}', [AdminController::class, 'userAcceptOrReject']);
+
     });
     // Route::gourp(['prefix'=>'admin','middleware' => 'auth:admin'],function() {
     //     Route::get('admin',[AdminController::class,'index']);
