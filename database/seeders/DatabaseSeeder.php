@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Admin::factory()->create([
             'name' => 'ayeaye',
             'password' => Hash::make('password'),
-         
         ]);
     }
 }
