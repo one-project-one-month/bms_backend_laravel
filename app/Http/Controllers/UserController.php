@@ -24,7 +24,7 @@ class UserController extends Controller
     }
 
     public function index(){
-        $userList = UserResouce::collection(User::get());
+        $userList = UserResource::collection(User::get());
         return $userList;
     }
 
