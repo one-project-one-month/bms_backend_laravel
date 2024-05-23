@@ -28,15 +28,11 @@ class StoreUserRequest extends FormRequest
             'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['required'],
-            'password' => ['required', 'string', 'min:8'],
             'balance' => ['required'],
             'isDelete' => '',
             'isDeactivate' => '',
             'stateCode' => ['required'],
             'townshipCode'=> ['required'],
-            'role' => '',
-            'status' => '',
-            'remark' => ['nullable'],
         ];
     }
 

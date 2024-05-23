@@ -24,9 +24,6 @@ class UserResource extends JsonResource
             'isDeactivate' => $this->isDeactivate,
             'StateCode' => $this->stateCode,
             'TownshipCode' => $this->townshipCode,
-            'Role' => $this->role,
-            'Status' => $this->status,
-            'Remark' => $this->remark
         ];
     }
 }

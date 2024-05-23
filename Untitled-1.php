@@ -29,3 +29,10 @@ class Handler extends ExceptionHandler
         return redirect()->guest(route('login'));
     }
 }
+
+
+$table->string('email');
+            $table->string('userName');
+            $table->date('DOB');
+            $table->string('townshipCode');
+            $table->string('role');

@@ -12,11 +12,26 @@ class UserService extends CommonService
         return new User();
     }
 
+    public function getAllPendingUsers()
+    {
+        return $this->connection()->query()->where('status', 'pending')->get();
+    }
+
+    public function updateUserStatus( string $status ,string $accountNo){
+        return $this->connection()->query()->where('accountNo',$accountNo)->update(['status' => $status]);
+    }
+
+    public function getUserByAccountNo($accountNo)
+    {
+        return $this->connection()->query()->where('accountNo',$accountNo)->first();
+
+    }
+
     public function getUserById($id){
         // return $this->connection()->query()->where('id',$id)->first();
     }
 
-    public function update(array $data,string $id){
+    public function update(string $status,string $accountNo){
         // return $this->connection()->query()->where('id',$id)->update($data);
     }
 

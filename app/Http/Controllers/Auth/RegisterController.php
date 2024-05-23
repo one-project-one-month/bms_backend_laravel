@@ -53,7 +53,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'balance' => ['required'],
@@ -61,6 +61,7 @@ class RegisterController extends Controller
             'townshipCode'=> ['required']
         ]);
     }
+    
 
     /**
      * Create a new user instance after a valid registration.

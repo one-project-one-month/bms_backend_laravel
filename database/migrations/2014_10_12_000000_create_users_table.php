@@ -26,10 +26,6 @@ return new class extends Migration
             $table->boolean('isDeactivate')->default(0);
             $table->string('stateCode');
             $table->string('townshipCode');
-            $table->string('role')->default('user');
-            $table->string('status')->default('pending');
-            $table->string('remark')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
