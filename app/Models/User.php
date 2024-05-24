@@ -31,11 +31,7 @@ class User extends Authenticatable
         'isDelete',
         'isDeactivate',
         'stateCode',
-        'townshipCode',
-        'role',
-        'status',
-        'remark',
-        'password'
+        'townshipCode'
     ];
 
     /**

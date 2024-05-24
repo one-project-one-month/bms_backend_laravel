@@ -64,32 +64,25 @@ class LoginController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user) {
-            if (Hash::check($request->password, $user->password)) {
+        if ($user && $user->status == 'accept') {
+            if($user->status == 'accept'){
+                if (Hash::check($request->password, $user->password)) {
 
-                return $this->success(
-                    [
-                        'user' => $user,
-                        'token' => $user->createToken(time())->plainTextToken
-                    ],
-                    'Login Success',
-                    200
-                );
+                    return $this->success(
+                        [
+                            'user' => $user,
+                            'token' => $user->createToken(time())->plainTextToken
+                        ],
+                        'Login Success',
+                        200
+                    );
+                }
+            }else{
+                return $this->error('Wait to accept your account by admin');
             }
-        }
-        // if(Auth::attempt(['email'=>$request->email,'password'=>$request->password],$request->get('remember'))){
-        //     return $this->success([
-        //         'user' => $user,
-        //         'token' => $user->createToken(time())->plainTextToken
-        //     ]);
-        // }
 
-        // if(Auth::guard('admin')->attempt(['email'=>$request->email,'password'=>$request->password],$request->get('remember'))) {
-        //     return $this->success([
-        //         'admin' => $admin,
-        //         'token' => $admin->createToken(time())->PlainTextToken
-        //     ]);
-        // }
+        }
+
         return $this->error(
             'unauthenticate',
             'Credentials Do Not Match',

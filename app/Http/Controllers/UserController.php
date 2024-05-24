@@ -23,7 +23,12 @@ class UserController extends Controller
         $this->user = $user;
     }
 
-    protected function store(StoreUserRequest $resquest)
+    public function index(){
+        $userList = UserResource::collection(User::get());
+        return $userList;
+    }
+
+    public function userRegister(StoreUserRequest $resquest)
     {
         $data = $resquest->validated();
 
@@ -32,9 +37,8 @@ class UserController extends Controller
         $data['accountNo'] = $accountNo;
         $data['isDelete'] = 0;
         $data['isDeactivate'] = 0;
-        $data['status'] = 'pending';
-        $data['role'] = 'user';
 
+        // return $data;
         $user = $this->user->insert($data);
         $resUser = UserResource::make($user);
 
@@ -44,7 +48,5 @@ class UserController extends Controller
 
     }
 
-    public function index(){
-        return Auth::user()->role;
-    }
+
 }

@@ -31,7 +31,7 @@ class UserService extends CommonService
         // return $this->connection()->query()->where('id',$id)->first();
     }
 
-    public function update(array $data,string $id){
+    public function update(string $status,string $accountNo){
         // return $this->connection()->query()->where('id',$id)->update($data);
     }
 
