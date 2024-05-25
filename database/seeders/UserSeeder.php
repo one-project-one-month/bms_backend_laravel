@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             'balance' => 150000,
             'stateCode' => 'MMR010',
             'townshipCode' => 'MMR010001',
-            'password' => Hash::make('12345678')
+            // 'password' => Hash::make('12345678')
         ]);
     }
 }
