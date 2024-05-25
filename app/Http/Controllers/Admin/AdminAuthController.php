@@ -8,14 +8,23 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AdminLoginRequest;
+use App\Services\AdminService;
+use App\Traits\HttpResponses;
 use Illuminate\Notifications\Notifiable;
-use App\Http\Controllers\Admin\AdminAuthController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HttpResponses;
 
+
+    protected $admin;
+
+    public function __construct(AdminService $admin)
+    {
+        $this->admin = $admin;
+    }
 
 
     public function login(AdminLoginRequest $request)
@@ -36,7 +45,7 @@ class AdminAuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
+                'message' => 'Admin Logged In Successfully',
                 'token' => $admin->createToken("API TOKEN")->plainTextToken
             ], 200);
 
@@ -46,5 +55,23 @@ class AdminAuthController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+
+    public function register(AdminLoginRequest $request)
+    {
+
+        $data = $request->validated();
+
+        $data['name'] = $request->name;
+        $data['password'] = Hash::make($request->password);
+       
+      
+        $adminSuccess = $this->admin->insert($data);
+
+        if ($adminSuccess) {
+            return response()->json('an admin is created successfully', 200);
+        }
+        return response()->json(['message'=>'fail to create'],403);
     }
 }

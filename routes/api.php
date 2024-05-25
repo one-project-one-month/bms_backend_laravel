@@ -41,6 +41,7 @@ Route::post('user/login',[LoginController::class,'login']);
 
     Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
         Route::middleware(['admin_auth'])->prefix('admin')->group(function() {
+            Route::post('/admin-register', [AdminAuthController::class, 'register']);
             Route::post('/user-register',[UserController::class,'userRegister']);
             // Route::get('/user_accept_or_reject', [AdminController::class, 'getAllPendingUsers']);
             // Route::patch('/user_accept_or_reject/{accountNo}', [AdminController::class, 'userAcceptOrReject']);
