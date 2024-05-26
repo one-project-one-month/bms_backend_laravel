@@ -25,8 +25,8 @@ class AdminRegisterRequest extends FormRequest
             'adminCode'=> '',
             'name'=> 'required|min:3',
             'password'=>'required',
-            
-            
+
+
         ];
     }
 }

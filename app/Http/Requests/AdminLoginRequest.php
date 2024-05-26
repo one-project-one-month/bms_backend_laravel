@@ -24,7 +24,7 @@ class AdminLoginRequest extends FormRequest
         return [
             'name'=> 'required|min:3',
             'password'=> 'required',
-           
+
         ];
     }
 }

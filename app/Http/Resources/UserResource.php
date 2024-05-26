@@ -15,7 +15,9 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'userCode' => $this->userCode,
             'AccountNo' => $this->accountNo,
+            'FullName' => $this->fullName,
             'Username' => $this->username,
             'Email' => $this->email,
             'Phone' => $this->phone,
@@ -24,6 +26,7 @@ class UserResource extends JsonResource
             'isDeactivate' => $this->isDeactivate,
             'StateCode' => $this->stateCode,
             'TownshipCode' => $this->townshipCode,
+            'AdminId' => $this->adminId,
         ];
     }
 }

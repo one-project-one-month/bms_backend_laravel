@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdminLoginRequest;
 use App\Http\Requests\AdminRegisterRequest;
 use App\Models\User;
-use App\Services\AdminService;
-use App\Services\UserService;
-use App\Traits\GenerateCodeNumber;
-use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Traits\HttpResponses;
+use App\Services\AdminService;
+use App\Traits\GenerateCodeNumber;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -23,7 +23,7 @@ class AdminController extends Controller
         $this->admin = $admin;
     }
 
-    
+
     public function insert(AdminRegisterRequest $request)
     {
 
@@ -33,9 +33,9 @@ class AdminController extends Controller
         $data['name'] = $request->name;
         $data['password'] = Hash::make($request->password);
         $data['role'] = $request->role;
-        
-       
-      
+
+
+
         $adminSuccess = $this->admin->insert($data);
 
         if ($adminSuccess) {
@@ -54,20 +54,20 @@ class AdminController extends Controller
 
     public function userAcceptOrReject(Request $request, $accountNo){
 
-       
+
         // Think about whether admins can update other information except status
 
         // ** Admin can update only status **
        $userUpdate = $this->user->updateUserStatus($request->status, $accountNo );
-   
+
         if ($userUpdate) {
-           
+
             $user = $this->user->getUserByAccountNo($accountNo);
-            
+
             return response()->json($user);
         }
 
-        
-        
+
+
     }
 }

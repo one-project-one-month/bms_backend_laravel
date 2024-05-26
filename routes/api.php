@@ -23,20 +23,11 @@ use App\Http\Controllers\Admin\AdminAuthController;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
 Auth::routes();
-Route::post('user/login',[LoginController::class,'login']);
+// Route::post('user/login',[LoginController::class,'login']);
 
-
-
-
-// Route::middleware(['admin_auth'])->group(function() {
-//     Route::prefix('admin')->group(function(){
-//         Route::get('admin',[AdminController::class,'index']);
-//         Route::get('userlist',[UserController::class,'index']);
-//     });
-// });
+Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
 
     Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
@@ -48,18 +39,11 @@ Route::post('user/login',[LoginController::class,'login']);
             Route::get('admin',[AdminController::class,'index']);
             Route::get('userlist',[UserController::class,'index']);
 
+            Route::post('account-deactivate',[UserController::class,'accountDeactivate']);
+            Route::post('account-delete',[UserController::class,'accountDelete']);
+
         });
 
-
-    // Route::middleware(['user_auth'])->prefix('user')->group(function() {
-
-    //     Route::get('home', function() {
-    //         return "This is user home";
-    //     });
-
-    //     Route::get('testing',[UserController::class,'index']);
-
-    // });
 
 });
 
