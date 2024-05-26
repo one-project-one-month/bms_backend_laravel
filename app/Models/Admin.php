@@ -22,6 +22,8 @@ class Admin extends Authenticatable
         'townshipCode',
         'role',
         'password',
+        'adminCode',
+        'role'
     ];
 
     protected $hidden = [

@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminLoginRequest;
+use App\Http\Requests\AdminRegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Traits\HttpResponses;
 use App\Services\AdminService;
-use App\Http\Resources\AdminResource;
-use App\Http\Requests\AdminRegisterRequest;
+use App\Services\UserService;
+use App\Traits\GenerateCodeNumber;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    use HttpResponses;
-
+    use GenerateCodeNumber, HttpResponses;
     protected $user, $admin;
 
     public function __construct(UserService $user, AdminService $admin)
@@ -22,18 +26,28 @@ class AdminController extends Controller
         $this->admin = $admin;
     }
 
-    public function adminRegister(AdminRegisterRequest $request){
-        // one admin is auto-crate when migration starts
-        // this function is to create new admin accounts for staff
-        // this action can only make by super admin
-        $data = $request->validate();
-        return $data;
-        $admin = $this->admin->insert($data);
-        $resAdmin = AdminResource::make($admin);
 
-        if($admin){
-            return $this->success($resAdmin,'success',200);
+    public function insert(AdminRegisterRequest $request)
+    {
+
+        $data = $request->validated();
+
+        $data['adminCode'] = $this->generateUniqueCode('Adm');
+        $data['name'] = $request->name;
+        $data['password'] = Hash::make($request->password);
+        $data['role'] = $request->role;
+
+
+
+        $adminSuccess = $this->admin->insert($data);
+
+        if ($adminSuccess) {
+            return response()->json([
+                'status' => true,
+                'message' => 'An Employee is created successfully',
+            ]);
         }
+        return $this->error(null,'Cannot create', 403);
     }
 
     public function getAllPendingUsers(){

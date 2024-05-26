@@ -10,10 +10,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\AdminLoginRequest;
+use App\Services\AdminService;
+use App\Traits\HttpResponses;
 use Illuminate\Notifications\Notifiable;
-use App\Http\Requests\AdminRegisterRequest;
-use App\Http\Controllers\Admin\AdminAuthController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
@@ -24,10 +25,14 @@ class AdminAuthController extends Controller
     public function login(AdminLoginRequest $request)
     {
 
+
         try {
 
             $validated = $request->validated();
-            $admin = Admin::where('userName', $validated['userName'])->first();
+
+            $admin = Admin::where('name', $validated['name'])->first();
+
+
 
             if (!Hash::check($validated['password'], $admin->password)) {
                 return response()->json([
@@ -39,7 +44,7 @@ class AdminAuthController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'User Logged In Successfully',
+                'message' => 'Admin Logged In Successfully',
                 'token' => $admin->createToken("API TOKEN")->plainTextToken
             ], 200);
 
@@ -50,4 +55,6 @@ class AdminAuthController extends Controller
             ], 500);
         }
     }
+
+
 }

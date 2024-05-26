@@ -19,6 +19,8 @@ class UserController extends Controller
 {
     use HasApiTokens,HttpResponses;
 
+    protected $user;
+
     function __construct(UserService $user){
         $this->user = $user;
     }
