@@ -49,44 +49,44 @@ class LoginController extends Controller
         // $this->middleware('guest:user')->except('logout');
     }
 
-    public function home(){
-        return $this->success(['message'=> 'this is home']);
-    }
-    public function login(Request $request){
-        // return $request->all();
-        $validation = Validator::make($request->all(),[
-            'email'   => 'required|email',
-            'password' => 'required|min:6'
-        ]);
-        if($validation->fails()){
-            return $this->error('',$validation->errors()->all,442);
-        }
+    // public function home(){
+    //     return $this->success(['message'=> 'this is home']);
+    // }
+    // public function login(Request $request){
+    //     // return $request->all();
+    //     $validation = Validator::make($request->all(),[
+    //         'email'   => 'required|email',
+    //         'password' => 'required|min:6'
+    //     ]);
+    //     if($validation->fails()){
+    //         return $this->error('',$validation->errors()->all,442);
+    //     }
 
-        $user = User::where('email', $request->email)->first();
+    //     $user = User::where('email', $request->email)->first();
 
-        if ($user && $user->status == 'accept') {
-            if($user->status == 'accept'){
-                if (Hash::check($request->password, $user->password)) {
+    //     if ($user && $user->status == 'accept') {
+    //         if($user->status == 'accept'){
+    //             if (Hash::check($request->password, $user->password)) {
 
-                    return $this->success(
-                        [
-                            'user' => $user,
-                            'token' => $user->createToken(time())->plainTextToken
-                        ],
-                        'Login Success',
-                        200
-                    );
-                }
-            }else{
-                return $this->error('Wait to accept your account by admin');
-            }
+    //                 return $this->success(
+    //                     [
+    //                         'user' => $user,
+    //                         'token' => $user->createToken(time())->plainTextToken
+    //                     ],
+    //                     'Login Success',
+    //                     200
+    //                 );
+    //             }
+    //         }else{
+    //             return $this->error('Wait to accept your account by admin');
+    //         }
 
-        }
+    //     }
 
-        return $this->error(
-            'unauthenticate',
-            'Credentials Do Not Match',
-            '401'
-        );
-    }
+    //     return $this->error(
+    //         'unauthenticate',
+    //         'Credentials Do Not Match',
+    //         '401'
+    //     );
+    // }
 }

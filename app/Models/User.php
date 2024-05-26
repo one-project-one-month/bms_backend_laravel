@@ -23,16 +23,23 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'userCode',
         'accountNo',
         'username',
+        'fullName',
         'email',
         'phone',
         'balance',
         'isDelete',
         'isDeactivate',
         'stateCode',
-        'townshipCode'
+        'townshipCode',
+        'adminId'
     ];
+
+    public function admin(): BelongsTo{
+        return $this->belongsTo(Admin::class,'id','adminId');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

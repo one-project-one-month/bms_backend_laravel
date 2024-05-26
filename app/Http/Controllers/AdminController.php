@@ -9,10 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Traits\HttpResponses;
 use App\Services\AdminService;
-use App\Services\UserService;
 use App\Traits\GenerateCodeNumber;
-use App\Traits\HttpResponses;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller

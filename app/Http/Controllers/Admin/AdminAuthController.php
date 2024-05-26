@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\AdminLoginRequest;
 use App\Services\AdminService;
-use App\Traits\HttpResponses;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;

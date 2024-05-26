@@ -16,8 +16,10 @@ return new class extends Migration
 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('userCode');
             $table->string('accountNo');
             $table->string('username');
+            $table->string('fullName');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone');
@@ -26,6 +28,7 @@ return new class extends Migration
             $table->boolean('isDeactivate')->default(0);
             $table->string('stateCode');
             $table->string('townshipCode');
+            $table->unsignedInteger('adminId');
             $table->rememberToken();
             $table->timestamps();
         });
