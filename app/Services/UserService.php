@@ -21,11 +21,11 @@ class UserService extends CommonService
         return $this->connection()->query()->where('accountNo',$accountNo)->update(['status' => $status]);
     }
 
-    public function accountDeactivated(string $status,string $accounNo){
-        return $this->connection()->query()->where('accountNo',$accounNo)->update(['isDeactivated' => $status]);
+    public function accountDeactivated(bool $status,string $accounNo){
+        return $this->connection()->query()->where('accountNo',$accounNo)->update(['isDeactivate' => $status]);
     }
 
-    public function accountDelete(string $status,string $accounNo){
+    public function accountDelete(bool $status,string $accounNo){
         return $this->connection()->query()->where('accountNo',$accounNo)->update(['isDelete'=> $status]);
     }
 

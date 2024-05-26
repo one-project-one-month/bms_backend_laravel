@@ -24,7 +24,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 //     return $request->user();
 // });
 
-// Auth::routes();
+Auth::routes();
 // Route::post('user/login',[LoginController::class,'login']);
 
 Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
@@ -38,6 +38,9 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
             // Route::patch('/user_accept_or_reject/{accountNo}', [AdminController::class, 'userAcceptOrReject']);
             Route::get('admin',[AdminController::class,'index']);
             Route::get('userlist',[UserController::class,'index']);
+
+            Route::post('account-deactivate',[UserController::class,'accountDeactivate']);
+            Route::post('account-delete',[UserController::class,'accountDelete']);
 
         });
 

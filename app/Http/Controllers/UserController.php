@@ -55,7 +55,30 @@ class UserController extends Controller
     }
 
     public function accountDeactivate(Request $resquest){
-        return $resquest;
+        $status = $resquest->isDeactivate;
+        $accountNo = $resquest->accountNo;
+        $accountDeactivate = $this->user->accountDeactivated($status,$accountNo);
+
+        if($accountDeactivate){
+            $user = $this->user->getUserByAccountNo($accountNo);
+            $resUser = UserResource::make($user);
+
+            return $this->success($resUser,'success',200);
+        }
+
+    }
+
+    public function accountDelete(Request $resquest){
+        // return $resquest;
+        $delete = $resquest->isDelete;
+        $accountNo = $resquest->accountNo;
+        $accountDelete = $this->user->accountDelete($delete,$accountNo);
+
+        if($accountDelete){
+            $user = $this->user->getUserByAccountNo($accountNo);
+            $resUser = UserResource::make($user);
+            return $this->error($resUser,'success',200);
+        }
 
     }
 
