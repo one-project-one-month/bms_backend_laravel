@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('adminCode');
             $table->string('name');
             $table->string('password');
+            $table->boolean('isDelete')->default(0);
+            $table->boolean('isDeactivate')->default(0);
             $table->enum('role',['admin', 'employee'])->default('employee');
             $table->rememberToken();
             $table->timestamps();

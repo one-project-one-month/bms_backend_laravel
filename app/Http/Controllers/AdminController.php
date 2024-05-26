@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AdminLoginRequest;
+
 use App\Http\Requests\AdminRegisterRequest;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Traits\HttpResponses;
 use App\Services\AdminService;
 use App\Traits\GenerateCodeNumber;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -21,6 +22,12 @@ class AdminController extends Controller
     {
         $this->user = $user;
         $this->admin = $admin;
+    }
+
+    public function index()
+    {
+        $admins = Admin::all();
+        return response()->json($admins);
     }
 
 
@@ -46,6 +53,50 @@ class AdminController extends Controller
         }
         return $this->error(null,'Cannot create', 403);
     }
+
+    public function accountDeactivate(Request $request)
+    {
+        
+        $request->validate([
+            'isDeactivate' => 'required|boolean',
+            'adminCode' => 'required|string',
+            'process' => 'required|in:deactivate,reactivate'
+        ]);
+
+        // Ensure the authenticated user is an admin
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['message' => 'Sorry, Employee role cannot make deactivation process'], 403);
+        }
+
+        // Get the necessary request data
+        $status = $request->isDeactivate;
+        $adminCode = $request->adminCode;
+        $process = $request->process;
+
+        // Find the admin, including trashed ones
+        $admin = $this->admin->getAdminByAdminCode($adminCode);
+
+        if (!$admin) {
+            return response()->json(['message' => 'AdminCode cannot be found'], 404);
+        }
+
+        // Update the admin's status
+         $this->admin->updateAccountStatus($status, $adminCode);
+        $updatedAdmin = $this->admin->getAdminByAdminCode($adminCode);
+      
+        // Deactivate or reactivate based on the process
+        if ($process === 'deactivate' && $status == 1) {
+            $updatedAdmin->delete(); // Soft delete
+            return $this->success($updatedAdmin, "Account is Deactivated", 200);
+        } elseif ($process === 'reactivate' && $status == 0) {
+            $updatedAdmin->restore(); // Restore
+            return $this->success($updatedAdmin, "Account is reactivated", 200);
+        } else {
+            return response()->json(['message' => 'Invalid process or status'], 400);
+        }
+    }
+
+
 
     public function getAllPendingUsers(){
        $users = $this->user->getAllPendingUsers();
