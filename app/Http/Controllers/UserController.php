@@ -19,16 +19,18 @@ class UserController extends Controller
 {
     use HasApiTokens,HttpResponses;
 
+    protected $user;
+
     function __construct(UserService $user){
         $this->user = $user;
     }
 
     public function index(){
-        $userList = UserResouce::collection(User::get());
+        $userList = UserResource::collection(User::get());
         return $userList;
     }
 
-    public function store(StoreUserRequest $resquest)
+    public function userRegister(StoreUserRequest $resquest)
     {
         $data = $resquest->validated();
 
@@ -37,8 +39,7 @@ class UserController extends Controller
         $data['accountNo'] = $accountNo;
         $data['isDelete'] = 0;
         $data['isDeactivate'] = 0;
-        $data['status'] = 'pending';
-        $data['role'] = 'user';
+
         // return $data;
         $user = $this->user->insert($data);
         $resUser = UserResource::make($user);
