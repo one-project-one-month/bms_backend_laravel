@@ -44,7 +44,7 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
             Route::post('account-deactivate',[UserController::class,'accountDeactivate']);
             Route::post('account-delete',[UserController::class,'accountDelete']);
 
-            Route::post('actions',[AdminController::class,'accountDeactivate']);
+            Route::post('actions',[AdminController::class,'accountActions']);
 
         });
 

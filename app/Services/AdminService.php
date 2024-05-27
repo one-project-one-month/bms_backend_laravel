@@ -28,6 +28,12 @@ class AdminService extends CommonService
 
     }
 
+    public function getAdminByUsername($username)
+    {
+        return $this->connection()->query()->withTrashed()->where('username',$username)->first();
+
+    }
+
     public function updateAccountStatus(bool $status,string $adminCode){
         return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDeactivate' => $status]);
     }

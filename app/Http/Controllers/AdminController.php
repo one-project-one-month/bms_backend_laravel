@@ -36,10 +36,18 @@ class AdminController extends Controller
 
         $data = $request->validated();
 
+        $data['username'] = $request->username;
+        $data['fullName'] = $request->fullName;
+        $data['email'] = $request->email;
         $data['adminCode'] = $this->generateUniqueCode('Adm');
         $data['name'] = $request->name;
         $data['password'] = Hash::make($request->password);
         $data['role'] = $request->role;
+        
+        if($request->role !== 'admin')
+        {
+            $data['managerId'] = Auth::user()->id;
+        }
 
 
 
@@ -54,7 +62,7 @@ class AdminController extends Controller
         return $this->error(null,'Cannot create', 403);
     }
 
-    public function accountDeactivate(Request $request)
+    public function accountActions(Request $request)
     {
         
         $request->validate([
@@ -86,15 +94,21 @@ class AdminController extends Controller
       
         // Deactivate or reactivate based on the process
         if ($process === 'deactivate' && $status == 1) {
+           
             $updatedAdmin->delete(); // Soft delete
             return $this->success($updatedAdmin, "Account is Deactivated", 200);
+        
         } elseif ($process === 'reactivate' && $status == 0) {
+       
             $updatedAdmin->restore(); // Restore
             return $this->success($updatedAdmin, "Account is reactivated", 200);
+       
         } else {
-            return response()->json(['message' => 'Invalid process or status'], 400);
+      
+            return $this->error(null, 'Invalid process or status', 403);   
         }
     }
+
 
 
 
