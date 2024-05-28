@@ -33,6 +33,8 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
     Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
         Route::middleware(['admin_auth'])->prefix('admin')->group(function() {
+           Route::get('/admins', [AdminController::class, 'index']);
+           
             Route::post('/admin-register', [AdminController::class, 'insert']);
             Route::post('/user-register',[UserController::class,'userRegister']);
             // Route::get('/user_accept_or_reject', [AdminController::class, 'getAllPendingUsers']);
@@ -45,6 +47,10 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
             Route::post('deposit',[DepositWithdrawController::class,'deposit']);
             Route::post('withdraw', [DepositWithdrawController::class,'withdraw']);
+
+            Route::post('actions',[AdminController::class,'accountActions']);
+
+
         });
 
 

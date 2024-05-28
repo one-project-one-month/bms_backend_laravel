@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
 use App\Models\Admin;
 use App\Traits\HttpResponses;
 use Laravel\Sanctum\HasApiTokens;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Resources\AdminResource;
 use App\Http\Requests\AdminLoginRequest;
 use App\Services\AdminService;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
     use HasApiTokens, HasFactory, Notifiable, HttpResponses;
 
+    protected  $admin;
 
+    public function __construct(AdminService $admin)
+    {
+        $this->admin = $admin;
+    }
 
     public function login(AdminLoginRequest $request)
     {
@@ -29,8 +31,7 @@ class AdminAuthController extends Controller
 
             $validated = $request->validated();
 
-            $admin = Admin::where('name', $validated['name'])->first();
-
+            $admin = $this->admin->getAdminByUsername($validated['username']);
 
 
             if (!Hash::check($validated['password'], $admin->password)) {
