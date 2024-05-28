@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\DepositWithdrawController;
 // use App\Http\Controllers\Auth\LoginController;
 
 /*
@@ -44,7 +45,11 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
             Route::post('account-deactivate',[UserController::class,'accountDeactivate']);
             Route::post('account-delete',[UserController::class,'accountDelete']);
 
+            Route::post('deposit',[DepositWithdrawController::class,'deposit']);
+            Route::post('withdraw', [DepositWithdrawController::class,'withdraw']);
+
             Route::post('actions',[AdminController::class,'accountActions']);
+
 
         });
 

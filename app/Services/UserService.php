@@ -35,6 +35,10 @@ class UserService extends CommonService
 
     }
 
+    public function balanceUpdateToAccount(float $balance,string $accountNo){
+        return $this->connection()->query()->where('accountNo',$accountNo)->update(['balance' => $balance]);
+    }
+
     public function getUserById($id){
         // return $this->connection()->query()->where('id',$id)->first();
     }
