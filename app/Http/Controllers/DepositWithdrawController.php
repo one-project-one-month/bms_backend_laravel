@@ -29,8 +29,8 @@ class DepositWithdrawController extends Controller
         $depositAmount = $request->amount;
         $type = $request->transactionType;
 
-        $user = $this->user->getUserByAccountNo($accountNo);
-        if($user->isDeactivate && $user->isDelete){
+        $user = $this->user->getUserByAccountNo($accountNo); // get user account data
+        if($user->isDeactivate && $user->isDelete){  // checking if the account is freeze or not
             return response()->json([
                 'success' => false,
                 'message' => "Account was freeze!"
@@ -43,7 +43,7 @@ class DepositWithdrawController extends Controller
 
                 $totalBalance = $currentBalance+ $depositAmount;
 
-                $depositAcc = $this->user->depositToAccount($totalBalance,$accountNo);
+                $depositAcc = $this->user->balanceUpdateToAccount($totalBalance,$accountNo); // update blance to user account
 
                 $deposit = $this->depositWithdraw->insert($data);
 
@@ -59,6 +59,52 @@ class DepositWithdrawController extends Controller
                     ],200);
                 }
 
+            }
+        }
+
+
+    }
+
+
+    public function withdraw(DepositWithdrawRequest $request){
+        $data = $request->validated();
+        $data['adminId'] = Auth::user()->id;
+        $accountNo = $request->accountNo;
+        $type = $request->transactionType;
+        $withdrawAmount = $request->amount;
+
+        $user = $this->user->getUserByAccountNo($accountNo);
+
+        if($user->isDeactivate && $user->isDelete){
+            return response()->json([
+                'success' => false,
+                'message' => "Account was freeze!"
+            ]);
+        }else{
+            $currentBalance = $user->balance;
+            if($withdrawAmount > $currentBalance){
+                return response()->json([
+                    'success' => false,
+                    'message' => "Not enough balance to withdraw"
+                ]);
+            }else{
+                $finalBalance = $currentBalance - $withdrawAmount;
+                $withdrawAcc = $this->user->balanceUpdateToAccount($finalBalance,$accountNo);
+
+                $withdraw = $this->depositWithdraw->insert($data);
+
+                if($withdrawAcc && $withdraw){
+                    $user = $this->user->getUserByAccountNo($accountNo);
+                    $resUser = UserResource::make($user);
+
+                    $resWithdraw = DepositWithdrawResource::make($withdraw);
+
+                    return response()->json([
+                        'withdraw' => $resWithdraw,
+                        'user' => $resUser,
+                        'message' => 'success'
+                    ]);
+                }
             }
         }
 

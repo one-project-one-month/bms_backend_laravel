@@ -44,7 +44,7 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
             Route::post('account-delete',[UserController::class,'accountDelete']);
 
             Route::post('deposit',[DepositWithdrawController::class,'deposit']);
-
+            Route::post('withdraw', [DepositWithdrawController::class,'withdraw']);
         });
 
 
