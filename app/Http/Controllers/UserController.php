@@ -77,7 +77,7 @@ class UserController extends Controller
         if($accountDelete){
             $user = $this->user->getUserByAccountNo($accountNo);
             $resUser = UserResource::make($user);
-            return $this->error($resUser,'success',200);
+            return $this->success($resUser,'success',200);
         }
 
     }
