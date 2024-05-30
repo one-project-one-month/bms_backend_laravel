@@ -22,13 +22,12 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         \App\Models\Admin::factory()->create([
-            'username'=> 'ayeaye123',
-            'fullName' => 'ayeaye',
+          
+            'name' => 'ayeaye',
             'adminCode' => $this->generateUniqueCode('Adm'),
             'email' => 'aye123@gmail.com',
             'password' => Hash::make('password'),
-            'role'=> 'admin',
-            
+            'role'=> 'admin',            
 
         ]);
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AdminRegisterRequest extends FormRequest
+class TransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,14 +21,10 @@ class AdminRegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'adminCode'=> '',
-            'email'=> 'required',
-            'name'=> 'required|min:3',
-            'role'=> 'required|in:admin,employee',
-            'password'=>'required',
-
-
+        return [  
+            'data.sender' => 'required|exists:transfers,sender',
+            'data.receiver'=> 'required|exists:transfers,receiver',
+            'data.transferAmount'=> 'required'
         ];
     }
 }
