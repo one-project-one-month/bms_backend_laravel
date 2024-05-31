@@ -22,8 +22,8 @@ class TransferRequest extends FormRequest
     public function rules(): array
     {
         return [  
-            'data.sender' => 'required|exists:transfers,sender',
-            'data.receiver'=> 'required|exists:transfers,receiver',
+            'data.sender' => 'required|exists:users,accountNo',
+            'data.receiver'=> 'required|exists:users,accountNo',
             'data.transferAmount'=> 'required'
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class AdminResource extends JsonResource
 {
@@ -15,13 +16,18 @@ class AdminResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $manager = Admin::where('id', $this->managerId)->first();
+
+      
+        // return parent::toArray($request);
+
+        // $manager = Admin::findOrFail($this->managerId);
 
         return [
             'name' => $this->name,
             'email' => $this->email,
             'role'=> $this->role,
-            'created_by' => ManagerResource::make($manager)
+            //when making transfer , removed this column from response
+            'created_by' => $this->when(!isset($request->process), ManagerResource::make(Auth::user()) )
             
             // 'created_by'=> AdminResource::make($this->managerId)
         ];

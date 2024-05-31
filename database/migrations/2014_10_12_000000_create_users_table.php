@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone');
-            $table->decimal('balance',places: 2);
+            $table->decimal('balance',19,2);
             $table->boolean('isDelete')->default(0);
             $table->boolean('isDeactivate')->default(0);
             $table->string('stateCode');
