@@ -31,7 +31,7 @@ class AdminAuthController extends Controller
 
             $validated = $request->validated();
 
-            $admin = $this->admin->getAdminByUsername($validated['username']);
+            $admin = $this->admin->getAdminByName($validated['name']);
 
 
             if (!Hash::check($validated['password'], $admin->password)) {

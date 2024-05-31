@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\TransactionController;
+
 use App\Http\Controllers\DepositWithdrawController;
 // use App\Http\Controllers\Auth\LoginController;
 
@@ -37,8 +39,6 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
            
             Route::post('/admin-register', [AdminController::class, 'insert']);
             Route::post('/user-register',[UserController::class,'userRegister']);
-            // Route::get('/user_accept_or_reject', [AdminController::class, 'getAllPendingUsers']);
-            // Route::patch('/user_accept_or_reject/{accountNo}', [AdminController::class, 'userAcceptOrReject']);
             Route::get('admin',[AdminController::class,'index']);
             Route::get('userlist',[UserController::class,'index']);
 
@@ -51,6 +51,9 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
             Route::post('actions',[AdminController::class,'accountActions']);
 
 
+            Route::post('users/transactions', [TransactionController::class, 'createTransaction']);
+
+            // Route::get('users/transactions')
         });
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\AdminRegisterRequest;
+use App\Http\Resources\AdminResource;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Services\UserService;
@@ -12,6 +13,7 @@ use App\Services\AdminService;
 use App\Traits\GenerateCodeNumber;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -34,32 +36,37 @@ class AdminController extends Controller
     public function insert(AdminRegisterRequest $request)
     {
 
-        $data = $request->validated();
+        DB::beginTransaction();
 
-        $data['username'] = $request->username;
-        $data['fullName'] = $request->fullName;
-        $data['email'] = $request->email;
-        $data['adminCode'] = $this->generateUniqueCode('Adm');
-        $data['name'] = $request->name;
-        $data['password'] = Hash::make($request->password);
-        $data['role'] = $request->role;
-        
-        if($request->role !== 'admin')
-        {
-            $data['managerId'] = Auth::user()->id;
+        try {
+           
+            $data = $request->validated();
+
+            $data['name'] = $request->name;
+            $data['email'] = $request->email;
+            $data['adminCode'] = $this->generateUniqueCode('Adm');
+            $data['password'] = Hash::make($request->password);
+            $data['role'] = $request->role;
+            
+            if($request->role !== 'admin')
+            {
+                $data['managerId'] = Auth::user()->id;
+            }
+    
+             $adminSuccess = $this->admin->insert($data);
+             $resAdmin = AdminResource::make($adminSuccess);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            
+            DB::rollBack();
+            throw $th;
+          
         }
+  
+        // $resAdmin = $this->admin->getAdminByAdminCode($data['adminCode']);
 
-
-
-        $adminSuccess = $this->admin->insert($data);
-
-        if ($adminSuccess) {
-            return response()->json([
-                'status' => true,
-                'message' => 'An Employee is created successfully',
-            ]);
-        }
-        return $this->error(null,'Cannot create', 403);
+        return  $this->success($resAdmin, 'success', 200);
     }
 
     public function accountActions(Request $request)
@@ -98,7 +105,7 @@ class AdminController extends Controller
             $updatedAdmin->delete(); // Soft delete
             return $this->success($updatedAdmin, "Account is Deactivated", 200);
         
-        } elseif ($process === 'reactivate' && $status == 0) {
+        } elseif ($process === 'activate' && $status == 0) {
        
             $updatedAdmin->restore(); // Restore
             return $this->success($updatedAdmin, "Account is reactivated", 200);
