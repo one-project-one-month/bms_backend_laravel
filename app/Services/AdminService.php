@@ -24,7 +24,13 @@ class AdminService extends CommonService
 
     public function getAdminByAdminCode($adminCode)
     {
-        return $this->connection()->query()->where('adminCode',$adminCode)->first();
+        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->first();
+
+    }
+
+    public function checkDeactivated($adminCode, $status)
+    {
+        return $this->connection()->query()->withTrashed()->where('adminCode', $adminCode)->first();
 
     }
 

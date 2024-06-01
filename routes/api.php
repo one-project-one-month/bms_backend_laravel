@@ -27,8 +27,7 @@ use App\Http\Controllers\DepositWithdrawController;
 //     return $request->user();
 // });
 
-Auth::routes();
-// Route::post('user/login',[LoginController::class,'login']);
+
 
 Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
