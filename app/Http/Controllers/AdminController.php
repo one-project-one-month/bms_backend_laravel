@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Requests\AccountActionRequest;
 use App\Http\Requests\AdminRegisterRequest;
 use App\Http\Resources\AdminResource;
 use App\Models\Admin;
@@ -69,30 +69,35 @@ class AdminController extends Controller
         return  $this->success($resAdmin, 'success', 200);
     }
 
-    public function accountActions(Request $request)
+    public function accountActions(AccountActionRequest $request)
     {
-        
-        $request->validate([
-            'isDeactivate' => 'required|boolean',
-            'adminCode' => 'required|string',
-            'process' => 'required|in:deactivate,reactivate'
-        ]);
-
-        // Ensure the authenticated user is an admin
-        if (Auth::user()->role !== 'admin') {
+         // Ensure the authenticated user is an admin
+         if (Auth::user()->role !== 'admin') {
             return response()->json(['message' => 'Sorry, Employee role cannot make deactivation process'], 403);
         }
+        
+       $validated = $request->validated();
 
-        // Get the necessary request data
-        $status = $request->isDeactivate;
-        $adminCode = $request->adminCode;
-        $process = $request->process;
+       $adminCode = $validated['data']['adminCode'];
+       $process = $validated['process'];
 
+       if ($process == "deactivate") {
+            $status = 1;
+       }else{
+         $status = 0;
+       }
+ 
         // Find the admin, including trashed ones
         $admin = $this->admin->getAdminByAdminCode($adminCode);
 
-        if (!$admin) {
+        if ($admin == null) {
             return response()->json(['message' => 'AdminCode cannot be found'], 404);
+        }
+     
+        if ($admin->isDeactivate === $status) {
+            return response()->json([
+                'message' => $status? 'The account is already Deactivated': 'The account is already activated'
+            ]);
         }
 
         // Update the admin's status
