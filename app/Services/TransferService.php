@@ -17,6 +17,12 @@ class TransferService extends CommonService
 
     }
 
+    public function getTransfer(string $columnName, string $column)
+    {
+        return $this->connection()->query()->with('admin')->where($columnName,$column)->get();
+
+    }
+
 
 
 

@@ -22,7 +22,7 @@ class AccountActionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "process" => "required|string|in:activate,deactivate",
+            "process" => "required|string|in:activate,deactivate,search",
             "data.adminCode" => "required|string|exists:admins,adminCode"
         ];
     }
