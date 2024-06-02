@@ -73,24 +73,44 @@ class AdminController extends Controller
     {
          // Ensure the authenticated user is an admin
          if (Auth::user()->role !== 'admin') {
-            return response()->json(['message' => 'Sorry, Employee role cannot make deactivation process'], 403);
+            return response()->json(['message' => 'Sorry, Employee role cannot make this process'], 403);
         }
-        
-       $validated = $request->validated();
+
+        $validated = $request->validated();
 
        $adminCode = $validated['data']['adminCode'];
-       $process = $validated['process'];
+       $process = $validated['process'];    
 
-       if ($process == "deactivate") {
-            $status = 1;
-       }else{
-         $status = 0;
-       }
- 
+        switch ($process) {
+            case "search":
+                return $this->search($adminCode);
+            case 'deactivate' || 'activate':
+                return $this->deactivateOrActivate($adminCode, $process);
+            
+            default:
+                return response()->json('hi', 400);
+
+        }
+    }
+
+    public function search($adminCode)
+    {
+       
         // Find the admin, including trashed ones
         $admin = $this->admin->getAdminByAdminCode($adminCode);
+        $resAdmin = AdminResource::make($admin);
+        return $this->success($admin, "success", 200);
 
-        if ($admin == null) {
+    }
+
+    public function deactivateOrActivate($adminCode, $process)
+    {
+        $process == "deactivate" ? $status = 1 : $status = 0 ;
+
+         // Find the admin, including trashed ones
+         $admin = $this->admin->getAdminByAdminCode($adminCode);
+
+         if ($admin == null) {
             return response()->json(['message' => 'AdminCode cannot be found'], 404);
         }
      
@@ -100,12 +120,12 @@ class AdminController extends Controller
             ]);
         }
 
-        // Update the admin's status
-         $this->admin->updateAccountStatus($status, $adminCode);
-        $updatedAdmin = $this->admin->getAdminByAdminCode($adminCode);
-      
-        // Deactivate or reactivate based on the process
-        if ($process === 'deactivate' && $status == 1) {
+            // Update the admin's status
+            $this->admin->updateAccountStatus($status, $adminCode);
+            $updatedAdmin = $this->admin->getAdminByAdminCode($adminCode);
+
+         // Deactivate or reactivate based on the process
+         if ($process === 'deactivate' && $status == 1) {
            
             $updatedAdmin->delete(); // Soft delete
             return $this->success($updatedAdmin, "Account is Deactivated", 200);
@@ -115,9 +135,6 @@ class AdminController extends Controller
             $updatedAdmin->restore(); // Restore
             return $this->success($updatedAdmin, "Account is reactivated", 200);
        
-        } else {
-      
-            return $this->error(null, 'Invalid process or status', 403);   
         }
     }
 
