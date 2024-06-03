@@ -88,7 +88,7 @@ class AdminController extends Controller
                 return $this->deactivateOrActivate($adminCode, $process);
             
             default:
-                return response()->json('hi', 400);
+                return response()->json('This process is invalid', 400);
 
         }
     }

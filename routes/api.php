@@ -52,6 +52,7 @@ Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
 
             Route::post('users/transactions', [TransactionController::class, 'createTransaction']);
 
+            Route::get('users', [UserController::class, 'index']);
             // Route::get('users/transactions')
         });
 

@@ -16,11 +16,12 @@ class DepositWithdrawResource extends JsonResource
     {
         return [
             'DepositWithdrawId' => $this->id,
-            'TransactionType' => $this->transactionType,
-            'AccountNo' => $this->accountNo,
-            'Amount' => $this->amount,
-            'TransactionDate' => $this->created_at,
-            'AdminId' => $this->adminId
+            'process' => $this->process,
+            'accountNo' => $this->accountNo,
+            'amount' => $this->amount,
+            'transactionDate' => $this->created_at,
+            'user' => UserResource::make($this->user),
+            'created_by'=> AdminResource::make($this->admin)
         ];
     }
 }
