@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('deposit_withdraws', function (Blueprint $table) {
             $table->id();
-            $table->string('transactionType');
+            $table->string('process');
             $table->string('accountNo');
             $table->decimal('amount',19,2);
+            $table->date('date');
+            $table->time('time');
             $table->timestamps();
             $table->unsignedInteger('adminId');
         });

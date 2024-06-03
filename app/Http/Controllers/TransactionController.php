@@ -2,26 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TransferRequest;
+use App\Http\Requests\DepositWithdrawRequest;
+
+use App\Http\Resources\DepositWithdrawResource;
 use App\Http\Resources\TransferResource;
+use App\Http\Resources\UserResource;
+use App\Models\DepositWithdraw;
 use App\Models\Transfer;
+use App\Services\DepositWithdrawService;
 use App\Services\TransferService;
 use App\Services\UserService;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
     use HttpResponses;
 
-    protected $transfer, $user;
+    protected $transfer, $user, $depositWithdraw;
 
-    public function __construct(UserService $user, TransferService $transfer)
+    public function __construct(UserService $user, TransferService $transfer, DepositWithdrawService $depositWithdraw)
     {
         $this->user = $user;
         $this->transfer = $transfer;
+        $this->depositWithdraw = $depositWithdraw;
 
     }
 
@@ -37,17 +44,14 @@ class TransactionController extends Controller
             case 'transfer':
                return $this->transfer($transferRequest);
             case 'deposit':
-                    # code...
-                 break;
-            case 'withdraw':
-           
-                break;
-            
+                return $this->depositOrWithDraw($transferRequest);
+            case 'withdraw':           
+                return $this->depositOrWithDraw($transferRequest);           
             case 'list':
                 return $this->list($transferRequest);       
             default:
-                # code...
-                break;
+                return response()->json('This process is invalid', 400);
+
         }
 
     }
@@ -92,15 +96,64 @@ class TransactionController extends Controller
        return $this->success($res, 'success', 200);
     }
 
-    public function deposit()
-    {
+    public function depositOrWithDraw($request){
+        $validated = $request->validate([
+            'process' => 'required',
+            'data.accountNo' => 'required',
+            'data.amount' => 'required',
+        ]);
+        
+       
+
+        $accountNo = $validated['data']['accountNo'];
+        $amount = $validated['data']['amount'];
+        $type = $validated['process'];
+        $adminId = Auth::id();
+        $date = Carbon::now()->toDateString();
+       $time = Carbon::now()->toTimeString();
+
+        $user = $this->user->getUserByAccountNo($accountNo); // get user account data
+        if($user->isDeactivate && $user->isDelete){  // checking if the account is freeze or not
+            return response()->json([
+                'success' => false,
+                'message' => "Account was freeze!"
+            ]);
+        }else{
+            $validated['adminId'] = Auth::user()->id;
+            $currentBalance = $user->balance;
+
+            if($type == 'deposit' ){              
+                    $totalBalance = $currentBalance+ $amount;            
+            }else{
+                $totalBalance = $currentBalance- $amount;
+            }
+
+            $depositAcc = $this->user->balanceUpdateToAccount($totalBalance,$accountNo); // update blance to user account
+
+            // prepare data for insert
+            $insertData = [
+                'process'=> $type,
+                'accountNo'=> $accountNo,
+                'amount'=> $amount,
+                'adminId' => $adminId,
+                'date'=> $date,
+                'time'=> $time
+
+            ];
+            
+            $deposit = $this->depositWithdraw->insert($insertData);
+
+            if($depositAcc && $deposit){
+                $resDeposit = DepositWithdrawResource::make($deposit);
+
+                return $this->success($resDeposit, 'success',200); 
+            }
+        }
+
 
     }
 
-    public function withdraw()
-    {
 
-    }
 
     public function list($transferRequest)
     {
@@ -113,6 +166,24 @@ class TransactionController extends Controller
             $transfers = Transfer::whereHas('admin', function ($query) use ($keyword){
                 $query->where('adminCode',$keyword);
             })->get();
+
+            
+
+            $withdraws = DepositWithdraw::where('process', 'withdraw')
+            ->orWhere('process', 'deposit')
+            ->whereHas('admin', function ($query) use ($keyword){
+                $query->where('adminCode',$keyword);
+            })->get();
+
+           
+            
+            // $transactions = $withdraws->merge($transfers); 
+              $transactions = collect(Arr::collapse([$transfers, $withdraws]));
+
+             
+
+            $orderTransactions = $transactions->sortByDesc('created_at')->values()->all();
+       
         }else{
             $validated = $transferRequest->validate([
                 'data.username'=> 'required'
@@ -121,11 +192,12 @@ class TransactionController extends Controller
             $keyword = $validated['data']['username'];
         }
 
-       
 
-        // $transfers = $this->transfer->getTransfer('adminCode', $keyword);
 
-        return response()->json($transfers);
+        return response()->json([
+            'transactions'=>$orderTransactions
+
+        ]);
        
     }
 }
