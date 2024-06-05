@@ -29,28 +29,40 @@ use App\Http\Controllers\DepositWithdrawController;
 
 
 
-Route::post('v1/admin/login', [AdminAuthController::class, 'login']);
+Route::post('v1/admins/login', [AdminAuthController::class, 'login']);
 
 
     Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
-        Route::middleware(['admin_auth'])->prefix('admin')->group(function() {
-           Route::get('/admins', [AdminController::class, 'index']);
+        Route::middleware(['admin_auth'])->group(function() {
+
+            Route::post('admins', [AdminController::class, 'insert']);
+            Route::get('/admins', [AdminController::class, 'index']);
+
+
+            Route::prefix('admins')->group(function(){
+
+                Route::post('actions',[AdminController::class,'accountActions']);
+
+
+                Route::prefix('users')->group(function(){
+                    Route::post('/registrations',[UserController::class,'userRegister']);
+
+                    Route::post('/transactions', [TransactionController::class, 'createTransaction']);
+                    
+                });
+            });
            
-            Route::post('/admin-register', [AdminController::class, 'insert']);
-            Route::post('/user-register',[UserController::class,'userRegister']);
+            
+            Route::post('/users/account-deactivate',[UserController::class,'accountDeactivate']);
+            Route::post('/users/account-delete',[UserController::class,'accountDelete']);
+            // Route::post('/admin-register', [AdminController::class, 'insert']);
             Route::get('admin',[AdminController::class,'index']);
             Route::get('userlist',[UserController::class,'index']);
 
-            Route::post('account-deactivate',[UserController::class,'accountDeactivate']);
-            Route::post('account-delete',[UserController::class,'accountDelete']);
 
-            Route::post('deposit',[DepositWithdrawController::class,'deposit']);
-            Route::post('withdraw', [DepositWithdrawController::class,'withdraw']);
+            // Route::post('deposit',[DepositWithdrawController::class,'deposit']);
+            // Route::post('withdraw', [DepositWithdrawController::class,'withdraw']);
 
-            Route::post('actions',[AdminController::class,'accountActions']);
-
-
-            Route::post('users/transactions', [TransactionController::class, 'createTransaction']);
 
             Route::get('users', [UserController::class, 'index']);
             // Route::get('users/transactions')
