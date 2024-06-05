@@ -23,7 +23,10 @@ class AdminRegisterRequest extends FormRequest
     {
         return [
             'adminCode'=> '',
-            'name'=> 'required|min:3',
+            'email'=> 'required',
+            'fullName'=> 'required|min:3',
+            'username'=> 'required|unique:admins,username,except,'.$this->id,
+            'role'=> 'required|in:admin,employee',
             'password'=>'required',
 
 
