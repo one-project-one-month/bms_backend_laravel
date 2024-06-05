@@ -17,5 +17,9 @@ class AdminService extends CommonService
         return $this->connection()->query()->where('ProductCategoryId', $id)->first();
     }
 
-    
+    public function getAdminById($id){
+        return $this->connection()->query()->where('id',$id)->first();
+    }
+
+
 }

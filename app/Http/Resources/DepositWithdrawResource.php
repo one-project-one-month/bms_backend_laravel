@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Http\Resources\AdminResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepositWithdrawResource extends JsonResource
@@ -20,7 +22,7 @@ class DepositWithdrawResource extends JsonResource
             'AccountNo' => $this->accountNo,
             'Amount' => $this->amount,
             'TransactionDate' => $this->created_at,
-            'AdminId' => $this->adminId
+            'AdminId' => new AdminResource(Admin::findOrFail($this->adminId))
         ];
     }
 }

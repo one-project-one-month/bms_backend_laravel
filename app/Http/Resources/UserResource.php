@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\AdminResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -26,7 +28,7 @@ class UserResource extends JsonResource
             'isDeactivate' => $this->isDeactivate,
             'StateCode' => $this->stateCode,
             'TownshipCode' => $this->townshipCode,
-            'AdminId' => $this->adminId,
+            'CreatedBy' => AdminResource::make($this->admin)
         ];
     }
 }
