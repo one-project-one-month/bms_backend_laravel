@@ -23,6 +23,7 @@ class AdminResource extends JsonResource
         // $manager = Admin::findOrFail($this->managerId);
 
         return [
+            'adminCode'=> $this->adminCode,
             'name' => $this->name,
             'email' => $this->email,
             'role'=> $this->role,

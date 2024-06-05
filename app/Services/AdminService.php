@@ -17,10 +17,12 @@ class AdminService extends CommonService
     //     return $this->connection()->query()->all();
     // }
 
-    public function getUserPending($id)
+    public function getAdminByEmail($email)
     {
-        return $this->connection()->query()->where('ProductCategoryId', $id)->first();
+        return $this->connection()->query()->where('email', $email)->first();
+
     }
+
 
     public function getAdminByAdminCode($adminCode)
     {
@@ -42,6 +44,11 @@ class AdminService extends CommonService
 
     public function updateAccountStatus(bool $status,string $adminCode){
         return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDeactivate' => $status]);
+    }
+
+    public function updateAccountDelete(bool $status, string $adminCode)
+    {
+        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDelete' => $status]);
     }
 
     

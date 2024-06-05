@@ -84,12 +84,14 @@ class AdminController extends Controller
         switch ($process) {
             case "search":
                 return $this->search($adminCode);
-            case 'deactivate' || 'activate':
+            case 'activate':
+                return $this->deactivateOrActivate($adminCode, $process);   
+            case 'deactivate':
                 return $this->deactivateOrActivate($adminCode, $process);
-            
+            case 'delete':
+                return $this->accountDelete($adminCode, $process);
             default:
                 return response()->json('This process is invalid', 400);
-
         }
     }
 
@@ -103,8 +105,34 @@ class AdminController extends Controller
 
     }
 
+    public function accountDelete($adminCode, $process){
+      
+        $status =  1;
+       
+        $admin = $this->admin->getAdminByAdminCode($adminCode);
+
+        if ($admin == null) {
+            return response()->json(['message' => 'AdminCode cannot be found'], 404);
+        }
+
+        if ($admin->isDeactivate === $status) {
+            return response()->json([
+                'message' => 'The account is already freezed'
+            ]);
+        }
+
+        $accountDelete = $this->admin->updateAccountDelete($status, $adminCode);
+
+        if($accountDelete){
+            $admin = $this->admin->getAdminByAdminCode($adminCode);
+            return $this->success($admin, "Account has bee freezed", 200);     
+        }
+
+    }
+
     public function deactivateOrActivate($adminCode, $process)
     {
+       
         $process == "deactivate" ? $status = 1 : $status = 0 ;
 
          // Find the admin, including trashed ones
@@ -133,8 +161,7 @@ class AdminController extends Controller
         } elseif ($process === 'activate' && $status == 0) {
        
             $updatedAdmin->restore(); // Restore
-            return $this->success($updatedAdmin, "Account is reactivated", 200);
-       
+            return $this->success($updatedAdmin, "Account is reactivated", 200);     
         }
     }
 
