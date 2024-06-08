@@ -71,6 +71,7 @@ class AdminController extends Controller
 
     public function accountActions(AccountActionRequest $request)
     {
+       
          // Ensure the authenticated user is an admin
          if (Auth::user()->role !== 'admin') {
             return response()->json(['message' => 'Sorry, Employee role cannot make this process'], 403);
@@ -123,6 +124,8 @@ class AdminController extends Controller
 
         $accountDelete = $this->admin->updateAccountDelete($status, $adminCode);
 
+    
+
         if($accountDelete){
             $admin = $this->admin->getAdminByAdminCode($adminCode);
             return $this->success($admin, "Account has bee freezed", 200);     
@@ -155,12 +158,12 @@ class AdminController extends Controller
          // Deactivate or reactivate based on the process
          if ($process === 'deactivate' && $status == 1) {
            
-            $updatedAdmin->delete(); // Soft delete
+            // $updatedAdmin->delete(); // Soft delete
             return $this->success($updatedAdmin, "Account is Deactivated", 200);
         
         } elseif ($process === 'activate' && $status == 0) {
        
-            $updatedAdmin->restore(); // Restore
+            // $updatedAdmin->restore(); // Restore
             return $this->success($updatedAdmin, "Account is reactivated", 200);     
         }
     }

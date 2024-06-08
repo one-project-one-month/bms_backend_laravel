@@ -20,6 +20,7 @@ class AdminAuthController extends Controller
 
     public function __construct(AdminService $admin)
     {
+       
         $this->admin = $admin;
     }
 
@@ -34,6 +35,15 @@ class AdminAuthController extends Controller
 
             $admin = $this->admin->getAdminByEmail($request->email);
 
+
+            // check accout has been freezed?
+            if($admin->isDelete == 1)
+            {
+                
+                return $this->error(null, "Cannot Login, the accout has been freezed", 404);
+
+            }
+            
             if ($admin == null) {
                return $this->error(null, "Cannot Login, the admin couldn't found", 404);
             }
