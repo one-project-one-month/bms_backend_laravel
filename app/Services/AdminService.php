@@ -17,10 +17,12 @@ class AdminService extends CommonService
     //     return $this->connection()->query()->all();
     // }
 
-    public function getUserPending($id)
+    public function getAdminByEmail($email)
     {
-        return $this->connection()->query()->where('ProductCategoryId', $id)->first();
+        return $this->connection()->query()->withTrashed()->where('email', $email)->first();
+
     }
+
 
     public function getAdminByAdminCode($adminCode)
     {
@@ -28,14 +30,25 @@ class AdminService extends CommonService
 
     }
 
-    public function getAdminByUsername($username)
+    public function checkDeactivated($adminCode, $status)
     {
-        return $this->connection()->query()->withTrashed()->where('username',$username)->first();
+        return $this->connection()->query()->withTrashed()->where('adminCode', $adminCode)->first();
+
+    }
+
+    public function getAdminByName($name)
+    {
+        return $this->connection()->query()->withTrashed()->where('name',$name)->first();
 
     }
 
     public function updateAccountStatus(bool $status,string $adminCode){
         return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDeactivate' => $status]);
+    }
+
+    public function updateAccountDelete(bool $status, string $adminCode)
+    {
+        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDelete' => $status]);
     }
 
 

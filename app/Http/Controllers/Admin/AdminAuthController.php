@@ -26,13 +26,17 @@ class AdminAuthController extends Controller
     public function login(AdminLoginRequest $request)
     {
 
-
         try {
 
             $validated = $request->validated();
 
-            $admin = $this->admin->getAdminByUsername($validated['username']);
+           
 
+            $admin = $this->admin->getAdminByEmail($request->email);
+
+            if ($admin == null) {
+               return $this->error(null, "Cannot Login, the admin couldn't found", 404);
+            }
 
             if (!Hash::check($validated['password'], $admin->password)) {
                 return response()->json([

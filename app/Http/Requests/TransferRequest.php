@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AdminLoginRequest extends FormRequest
+class TransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +21,10 @@ class AdminLoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'email'=> 'required',
-            'password'=> 'required',
-
+        return [  
+            'data.sender' => 'required|exists:users,accountNo',
+            'data.receiver'=> 'required|exists:users,accountNo',
+            'data.transferAmount'=> 'required'
         ];
     }
 }
