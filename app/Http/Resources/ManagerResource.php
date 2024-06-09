@@ -15,6 +15,7 @@ class ManagerResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'adminCode'=> $this->adminCode,
             'name' => $this->name,
             'email' => $this->email,
             'role'=> $this->role

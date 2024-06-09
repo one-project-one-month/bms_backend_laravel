@@ -11,6 +11,7 @@ use App\Http\Requests\AdminLoginRequest;
 use App\Services\AdminService;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
@@ -70,5 +71,11 @@ class AdminAuthController extends Controller
         }
     }
 
+    public function logout()
+    {
+        Auth::user()->currentAccessToken()->delete();
+        return $this->success(null, "Successfully logout", 204);
+
+    }
 
 }
