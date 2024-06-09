@@ -41,6 +41,8 @@ Route::post('v1/admins/login', [AdminAuthController::class, 'login']);
 
             Route::prefix('admins')->group(function(){
 
+                Route::put('/update', [AdminController::class, 'update']);
+                Route::post('/logout', [AdminAuthController::class, 'logout']);
                 Route::post('actions',[AdminController::class,'accountActions']);
 
 

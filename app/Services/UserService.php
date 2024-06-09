@@ -39,6 +39,16 @@ class UserService extends CommonService
         return $this->connection()->query()->where('accountNo',$accountNo)->update(['balance' => $balance]);
     }
 
+    public function checkDeactivate(string $accountNo)
+    {
+        return $this->connection()->query()->where('accountNo',$accountNo)->first()->isDeactivate; 
+    }
+
+    public function checkDelete(string $accountNo)
+    {
+        return $this->connection()->query()->where('accountNo',$accountNo)->first()->isDelete; 
+    }
+
     public function getUserById($id){
         // return $this->connection()->query()->where('id',$id)->first();
     }

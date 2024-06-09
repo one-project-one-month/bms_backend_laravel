@@ -47,8 +47,8 @@ class TransactionController extends Controller
                 return $this->depositOrWithDraw($transferRequest);
             case 'withdraw':           
                 return $this->depositOrWithDraw($transferRequest);           
-            case 'list':
-                return $this->list($transferRequest);       
+            case 'adminlist':
+                return $this->adminlist($transferRequest);       
             default:
                 return response()->json('This process is invalid', 400);
 
@@ -70,8 +70,14 @@ class TransactionController extends Controller
         $validated['data']['date'] = Carbon::now()->toDateString();
         $validated['data']['time'] = Carbon::now()->toTimeString();
 
+        
         $senderAccountNo = $validated['data']['sender'];
         $receiverAccountNo = $validated['data']['receiver'];
+    
+        // Check user accounts are deactivated or deleted
+        // $this->checkStatus($senderAccountNo);
+        // $this->checkStatus($receiverAccountNo);
+
 
         $senderAccount = $this->user->getUserByAccountNo($validated['data']['sender']);
         $receiverAccount = $this->user->getUserByAccountNo($validated['data']['receiver']);
@@ -102,10 +108,12 @@ class TransactionController extends Controller
             'data.accountNo' => 'required',
             'data.amount' => 'required',
         ]);
-        
-       
 
         $accountNo = $validated['data']['accountNo'];
+
+        // check user account is deactivated of freezed
+        // $this->checkStatus($accountNo);
+
         $amount = $validated['data']['amount'];
         $type = $validated['process'];
         $adminId = Auth::id();
@@ -155,7 +163,7 @@ class TransactionController extends Controller
 
 
 
-    public function list($transferRequest)
+    public function adminlist($transferRequest)
     {
         if (isset($transferRequest->data['adminCode'])) {
             $validated = $transferRequest->validate([
@@ -200,4 +208,25 @@ class TransactionController extends Controller
         ]);
        
     }
+
+    // public function checkStatus($accountNo)
+    // {
+    //     if ($this->user->checkDeactivate($accountNo) == 1 ) {
+    //         return $this->error(null, "Cannot Transfer, The sender's account has been deactivated", 204);
+    //      }
+ 
+    //      if ($this->user->checkDeactivate($accountNo) == 1) {
+    //          return $this->error(null, "Cannot Transfer, The receiver's account has been deactivated", 204);
+    //       }
+        
+    //       if ($this->user->checkDelete($accountNo) == 1 ) {
+    //         return $this->error(null, "Cannot Transfer, The sender's account has been freezed", 204);
+    //      }
+ 
+    //      if ($this->user->checkDelete($accountNo) == 1) {
+    //          return $this->error(null, "Cannot Transfer, The receiver's account has been freezed", 204);
+    //       }
+        
+ 
+    // }
 }
