@@ -17,7 +17,7 @@ class AdminResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-      
+
 
         if (is_null($this->managerId)) {
            $manager = null;
@@ -38,9 +38,9 @@ class AdminResource extends JsonResource
                 'created-by' => ManagerResource::make($manager)
             ]),
             //when making transfer , removed this column from response
+
             'created_by' => $this->when(!isset($request->process) || $request->process == "search", ManagerResource::make(Auth::user()) )
-            
-            // 'created_by'=> AdminResource::make($this->managerId)
+
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Http\Resources\AdminResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DepositWithdrawResource extends JsonResource

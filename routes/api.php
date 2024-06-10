@@ -48,15 +48,15 @@ Route::post('v1/admins/login', [AdminAuthController::class, 'login']);
 
                 Route::prefix('users')->group(function(){
                     Route::post('/registrations',[UserController::class,'userRegister']);
-
+                    Route::post('/actions',[UserController::class,'userAccActions']);
                     Route::post('/transactions', [TransactionController::class, 'createTransaction']);
-                    
+
                 });
             });
-           
-            
-            Route::post('/users/account-deactivate',[UserController::class,'accountDeactivate']);
-            Route::post('/users/account-delete',[UserController::class,'accountDelete']);
+
+
+            // Route::post('/users/account-deactivate',[UserController::class,'accountDeactivate']);
+            // Route::post('/users/account-delete',[UserController::class,'accountDelete']);
             // Route::post('/admin-register', [AdminController::class, 'insert']);
             Route::get('admin',[AdminController::class,'index']);
             Route::get('userlist',[UserController::class,'index']);

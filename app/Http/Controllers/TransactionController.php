@@ -39,16 +39,19 @@ class TransactionController extends Controller
             'process'=> 'required'
         ]);
         $process = $transferRequest->process;
-        
+
         switch ($process) {
             case 'transfer':
                return $this->transfer($transferRequest);
             case 'deposit':
                 return $this->depositOrWithDraw($transferRequest);
+            case 'withdraw':
+                return $this->depositOrWithDraw($transferRequest);
             case 'withdraw':           
                 return $this->depositOrWithDraw($transferRequest);           
             case 'adminlist':
                 return $this->adminlist($transferRequest);       
+
             default:
                 return response()->json('This process is invalid', 400);
 
@@ -59,7 +62,7 @@ class TransactionController extends Controller
 
     public function transfer($transferRequest)
     {
-        
+
       $validated =  $transferRequest->validate([
             'data.sender' => 'required|exists:users,accountNo',
             'data.receiver'=> 'required|exists:users,accountNo',
@@ -96,7 +99,7 @@ class TransactionController extends Controller
 
          $insert = $this->transfer->insert($validated['data']);
         if ($insert) {
-            $transfer = $this->transfer->getByTransferId($insert->id);          
+            $transfer = $this->transfer->getByTransferId($insert->id);
         }
         $res = TransferResource::make($transfer);
        return $this->success($res, 'success', 200);
@@ -108,6 +111,7 @@ class TransactionController extends Controller
             'data.accountNo' => 'required',
             'data.amount' => 'required',
         ]);
+
 
         $accountNo = $validated['data']['accountNo'];
 
@@ -121,17 +125,22 @@ class TransactionController extends Controller
        $time = Carbon::now()->toTimeString();
 
         $user = $this->user->getUserByAccountNo($accountNo); // get user account data
-        if($user->isDeactivate && $user->isDelete){  // checking if the account is freeze or not
+        if($user->isDeactivate){  // checking if the account is freeze or not
             return response()->json([
                 'success' => false,
-                'message' => "Account was freeze!"
+                'message' => "Account was freezed!"
+            ]);
+        }else if($user->isDelete){
+            return response()->json([
+                'success' => false,
+                'message' => "Account was deleted!"
             ]);
         }else{
             $validated['adminId'] = Auth::user()->id;
             $currentBalance = $user->balance;
 
-            if($type == 'deposit' ){              
-                    $totalBalance = $currentBalance+ $amount;            
+            if($type == 'deposit' ){
+                    $totalBalance = $currentBalance+ $amount;
             }else{
                 $totalBalance = $currentBalance- $amount;
             }
@@ -148,13 +157,13 @@ class TransactionController extends Controller
                 'time'=> $time
 
             ];
-            
+
             $deposit = $this->depositWithdraw->insert($insertData);
 
             if($depositAcc && $deposit){
                 $resDeposit = DepositWithdrawResource::make($deposit);
 
-                return $this->success($resDeposit, 'success',200); 
+                return $this->success($resDeposit, 'success',200);
             }
         }
 
@@ -165,39 +174,36 @@ class TransactionController extends Controller
 
     public function adminlist($transferRequest)
     {
-        if (isset($transferRequest->data['adminCode'])) {
+        if (isset($transferRequest->data['accountNo'])) {
             $validated = $transferRequest->validate([
-                'data.adminCode'=> 'required'
+                'data.accountNo'=> 'required'
             ]);
-            $keyword = $validated['data']['adminCode'];
+            $accountNo = $validated['data']['accountNo'];
 
-            $transfers = Transfer::whereHas('admin', function ($query) use ($keyword){
-                $query->where('adminCode',$keyword);
-            })->get();
+            $transfers = Transfer::where('sender',$accountNo)->get();
 
-            
+
 
             $withdraws = DepositWithdraw::where('process', 'withdraw')
             ->orWhere('process', 'deposit')
-            ->whereHas('admin', function ($query) use ($keyword){
-                $query->where('adminCode',$keyword);
-            })->get();
+            ->where('accountNo',$accountNo)
+            ->get();
 
-           
-            
-            // $transactions = $withdraws->merge($transfers); 
-              $transactions = collect(Arr::collapse([$transfers, $withdraws]));
 
-             
+
+            // $transactions = $withdraws->merge($transfers);
+              $transactions = collect(Arr::collapse([$transfers,$withdraws]));
+
+
 
             $orderTransactions = $transactions->sortByDesc('created_at')->values()->all();
-       
+
         }else{
             $validated = $transferRequest->validate([
                 'data.username'=> 'required'
             ]);
 
-            $keyword = $validated['data']['username'];
+            $accountNo = $validated['data']['username'];
         }
 
 
@@ -206,7 +212,7 @@ class TransactionController extends Controller
             'transactions'=>$orderTransactions
 
         ]);
-       
+
     }
 
     // public function checkStatus($accountNo)

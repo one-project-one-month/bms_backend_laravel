@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserAccActionRequest;
 
 class UserController extends Controller
 {
@@ -31,11 +32,11 @@ class UserController extends Controller
         return $userList;
     }
 
-    public function userRegister(StoreUserRequest $resquest)
+    public function userRegister(StoreUserRequest $request)
     {
-        $data = $resquest->validated();
+        $data = $request->validated();
         $userCode = $this->generateUniqueCode('Cus');
-        $townshipNo = substr($resquest->townshipCode,3);
+        $townshipNo = substr($request->townshipCode,3);
         $accountNo = $townshipNo.'-'.rand(0,999).'-'.rand(0,999).'-'.rand(0,999);
 
         $data['userCode'] = $userCode;
@@ -54,28 +55,72 @@ class UserController extends Controller
 
     }
 
-    public function accountDeactivate(Request $resquest){
-        $status = $resquest->isDeactivate;
-        $accountNo = $resquest->accountNo;
-        $accountDeactivate = $this->user->accountDeactivated($status,$accountNo);
+    public function userAccActions(UserAccActionRequest $request){
+        $validateData = $request->validated();
+        $accountNo = $validateData['data']['accountNo'];
+        $process = $validateData['process'];
 
-        if($accountDeactivate){
-            $user = $this->user->getUserByAccountNo($accountNo);
-            $resUser = UserResource::make($user);
 
+        if($process == 'deactivate'){
+            return $this->deactivateOrActivate($process,$accountNo);
+        }else if($process == 'activate'){
+            return $this->deactivateOrActivate($process,$accountNo);
+        }else if($process == 'delete'){
+            return $this->accountDelete($process,$accountNo);
+        }else{
+            return response()->json(['message' => 'Invalid action']);
+        }
+
+    }
+
+    private function deactivateOrActivate($process,$accountNo){
+        $account = $accountNo;
+        $process == 'deactivate' ? $status = 1 : $status = 0;
+
+        $user = $this->user->getUserByAccountNo($accountNo);
+        // return $user->isDeactivate;
+
+        if($user = null){
+            return response()->json(['message' => 'User account not found!'],404);
+        }
+
+        // if($user->isDeactivate === $status){
+        //     return response()->json([
+        //         'message' => $status ?'User account has been already deactivate' :  "The account is already activate"
+        //     ]);
+        // }
+
+        if($status){
+
+            $accountDeactivate = $this->user->accountDeactivated($status,$accountNo);
+
+            $deactivateAcc = $this->user->getUserByAccountNo($accountNo);
+            $resUser = UserResource::make($deactivateAcc);
+
+            return $this->success($resUser,'success',200);
+        }else{
+            $accountActivate = $this->user->accountDeactivated($status,$accountNo);
+
+            $activateAcc = $this->user->getUserByAccountNo($account);
+            $resUser = UserResource::make($activateAcc);
             return $this->success($resUser,'success',200);
         }
 
     }
 
-    public function accountDelete(Request $resquest){
-        // return $resquest;
-        $delete = $resquest->isDelete;
-        $accountNo = $resquest->accountNo;
-        $accountDelete = $this->user->accountDelete($delete,$accountNo);
+    public function accountDelete($process,$accountNo){
+        // return $request;
+        $status = 1;
+        $user = $this->user->getUserByAccountNo($accountNo);
+        if($user = null){
+            return response()->json([
+                'message' => 'User account not found!'
+            ]);
+        }
+        $accountDelete = $this->user->accountDelete($status,$accountNo);
 
         if($accountDelete){
-            $user = $this->user->getUserByAccountNo($accountNo);
+
             $resUser = UserResource::make($user);
             return $this->success($resUser,'success',200);
         }

@@ -30,7 +30,7 @@ class DepositWithdrawController extends Controller
         $type = $request->transactionType;
 
         $user = $this->user->getUserByAccountNo($accountNo); // get user account data
-        if($user->isDeactivate && $user->isDelete){  // checking if the account is freeze or not
+        if($user->isDeactivate || $user->isDelete){  // checking if the account is freeze or not
             return response()->json([
                 'success' => false,
                 'message' => "Account was freeze!"
@@ -93,7 +93,7 @@ class DepositWithdrawController extends Controller
 
                 $withdraw = $this->depositWithdraw->insert($data);
 
-                if($withdrawAcc && $withdraw){
+                if($withdrawAcc || $withdraw){
                     $user = $this->user->getUserByAccountNo($accountNo);
                     $resUser = UserResource::make($user);
 
