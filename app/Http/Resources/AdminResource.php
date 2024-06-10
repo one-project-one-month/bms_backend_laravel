@@ -18,21 +18,29 @@ class AdminResource extends JsonResource
     {
 
 
-        // return parent::toArray($request);
 
-        // $manager = Admin::findOrFail($this->managerId);
+        if (is_null($this->managerId)) {
+           $manager = null;
+        }else{
+            $manager = Admin::findOrFail($this->managerId);
+        }
+       
 
         return [
             'adminCode'=> $this->adminCode,
             'name' => $this->name,
             'email' => $this->email,
             'role'=> $this->role,
+            $this->mergeWhen($request->process == "deactivate" || 
+            $request->process == "activate", [
+                'isDelete' => $this->isDelete,
+                'isDeactivate'=> $this->isDeactivate,
+                'created-by' => ManagerResource::make($manager)
+            ]),
             //when making transfer , removed this column from response
-            'created_by' => $this->when(!isset($request->process), ManagerResource::make(Auth::user())),
 
-            // 'crated_by' => $this->when(!isset($request->balance), ManagerResource::make(Auth::user()))
+            'created_by' => $this->when(!isset($request->process) || $request->process == "search", ManagerResource::make(Auth::user()) )
 
-            // 'created_by'=> AdminResource::make($this->managerId)
         ];
     }
 }

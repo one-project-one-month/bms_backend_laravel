@@ -11,6 +11,7 @@ use App\Http\Requests\AdminLoginRequest;
 use App\Services\AdminService;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
@@ -20,6 +21,7 @@ class AdminAuthController extends Controller
 
     public function __construct(AdminService $admin)
     {
+       
         $this->admin = $admin;
     }
 
@@ -34,6 +36,15 @@ class AdminAuthController extends Controller
 
             $admin = $this->admin->getAdminByEmail($request->email);
 
+
+            // check accout has been freezed?
+            if($admin->isDelete == 1)
+            {
+                
+                return $this->error(null, "Cannot Login, the accout has been freezed", 404);
+
+            }
+            
             if ($admin == null) {
                return $this->error(null, "Cannot Login, the admin couldn't found", 404);
             }
@@ -60,5 +71,11 @@ class AdminAuthController extends Controller
         }
     }
 
+    public function logout()
+    {
+        Auth::user()->currentAccessToken()->delete();
+        return $this->success(null, "Successfully logout", 204);
+
+    }
 
 }

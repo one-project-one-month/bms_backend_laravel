@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Admin extends Authenticatable
 {
-    use SoftDeletes, HasFactory, HasApiTokens, Notifiable;
+    use  HasFactory, HasApiTokens, Notifiable;
 
     // protected $table = 'admins';
     protected $guarded = [];

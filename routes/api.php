@@ -33,14 +33,16 @@ Route::post('v1/admins/login', [AdminAuthController::class, 'login']);
 
 
     Route::group(['prefix' => 'v1','middleware' => 'auth:sanctum'], function () {
-        Route::middleware(['admin_auth'])->group(function() {
+        Route::middleware(['admin_auth', 'check.deactivate'])->group(function() {
 
             Route::post('admins', [AdminController::class, 'insert']);
-            Route::get('/admins', [AdminController::class, 'index']);
+            Route::get('/admins', [AdminController::class, 'index'])->middleware('check.softDelete');
 
 
             Route::prefix('admins')->group(function(){
 
+                Route::put('/update', [AdminController::class, 'update']);
+                Route::post('/logout', [AdminAuthController::class, 'logout']);
                 Route::post('actions',[AdminController::class,'accountActions']);
 
 

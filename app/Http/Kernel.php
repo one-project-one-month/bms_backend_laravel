@@ -4,6 +4,8 @@ namespace App\Http;
 
 use App\Http\Middleware\UserAuthMiddleware;
 use App\Http\Middleware\AdminAuthMiddleware;
+use App\Http\Middleware\checkDeactivateMiddleware;
+use App\Http\Middleware\CheckSoftDeleteAccount;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -68,5 +70,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin_auth' => AdminAuthMiddleware::class,
         'user_auth' => UserAuthMiddleware::class,
+        'check.softDelete'=> CheckSoftDeleteAccount::class,
+        'check.deactivate' => checkDeactivateMiddleware::class
     ];
 }
