@@ -60,7 +60,7 @@ class TransactionController extends Controller
     public function transfer($transferRequest)
     {
 
-      $validated =  $transferRequest->validate([
+        $validated =  $transferRequest->validate([
             'data.sender' => 'required|exists:users,accountNo',
             'data.receiver'=> 'required|exists:users,accountNo',
             'data.transferAmount'=> 'required'
@@ -72,10 +72,26 @@ class TransactionController extends Controller
 
         $senderAccountNo = $validated['data']['sender'];
         $receiverAccountNo = $validated['data']['receiver'];
-
+        if($senderAccount == $receiverAccount){
+            return response()->json([
+                'success' => false,
+                'message' => "Sender and reciver account must be different!"
+            ]);
+        }
         $senderAccount = $this->user->getUserByAccountNo($validated['data']['sender']);
         $receiverAccount = $this->user->getUserByAccountNo($validated['data']['receiver']);
 
+        if($senderAccount->isDeactivate || $receiverAccount->isDeactivate){
+            return response()->json([
+                'success' => false,
+                'message' => "Account was freezed!"
+            ]);
+        }else if($senderAccount->isDelete || $receiverAccount->isDelete){
+            return response()->json([
+                'success' => false,
+                'message' => "Account was delete!"
+            ]);
+        }
         $transferAmount = $validated['data']['transferAmount'];
 
         $senderBalance = $senderAccount->balance - $transferAmount;
@@ -104,13 +120,16 @@ class TransactionController extends Controller
         ]);
 
 
-
         $accountNo = $validated['data']['accountNo'];
+
+        // check user account is deactivated of freezed
+        // $this->checkStatus($accountNo);
+
         $amount = $validated['data']['amount'];
         $type = $validated['process'];
         $adminId = Auth::id();
         $date = Carbon::now()->toDateString();
-       $time = Carbon::now()->toTimeString();
+        $time = Carbon::now()->toTimeString();
 
         $user = $this->user->getUserByAccountNo($accountNo); // get user account data
         if($user->isDeactivate){  // checking if the account is freeze or not

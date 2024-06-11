@@ -80,7 +80,7 @@ class UserController extends Controller
         $user = $this->user->getUserByAccountNo($accountNo);
         // return $user->isDeactivate;
 
-        if($user = null){
+        if($user == null){
             return response()->json(['message' => 'User account not found!'],404);
         }
 
@@ -112,7 +112,7 @@ class UserController extends Controller
         // return $request;
         $status = 1;
         $user = $this->user->getUserByAccountNo($accountNo);
-        if($user = null){
+        if($user == null){
             return response()->json([
                 'message' => 'User account not found!'
             ]);
