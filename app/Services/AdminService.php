@@ -26,29 +26,29 @@ class AdminService extends CommonService
 
     public function getAdminByAdminCode($adminCode)
     {
-        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->first();
+        return $this->connection()->query()->where('adminCode',$adminCode)->first();
 
     }
 
     public function checkDeactivated($adminCode, $status)
     {
-        return $this->connection()->query()->withTrashed()->where('adminCode', $adminCode)->first();
+        return $this->connection()->query()->where('adminCode', $adminCode)->first();
 
     }
 
     public function getAdminByName($name)
     {
-        return $this->connection()->query()->withTrashed()->where('name',$name)->first();
+        return $this->connection()->query()->where('name',$name)->first();
 
     }
 
     public function updateAccountStatus(bool $status,string $adminCode){
-        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDeactivate' => $status]);
+        return $this->connection()->query()->where('adminCode',$adminCode)->update(['isDeactivate' => $status]);
     }
 
     public function updateAccountDelete(bool $status, string $adminCode)
     {
-        return $this->connection()->query()->withTrashed()->where('adminCode',$adminCode)->update(['isDelete' => $status]);
+        return $this->connection()->query()->where('adminCode',$adminCode)->update(['isDelete' => $status]);
     }
 
 

@@ -29,7 +29,8 @@ class AdminController extends Controller
     public function index()
     {
         $admins = Admin::all();
-        return response()->json($admins);
+         $resAdmins = AdminResource::collection($admins);
+        return $this->success($resAdmins);
     }
 
 
@@ -71,6 +72,7 @@ class AdminController extends Controller
 
     public function accountActions(AccountActionRequest $request)
     {
+       
          // Ensure the authenticated user is an admin
          if (Auth::user()->role !== 'admin') {
             return response()->json(['message' => 'Sorry, Employee role cannot make this process'], 403);
@@ -95,13 +97,47 @@ class AdminController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+        return response()->json(['message' => 'Sorry, Employee role cannot make update'], 403);
+        }
+
+
+        $admin = $this->admin->getAdminByAdminCode($request->adminCode);
+
+       if (is_null($admin)) {
+        $this->error(null, "Admin not found", 404);
+       }
+
+       if ($request->has('data.name')) {
+        $admin->name = $request['data']['name'];
+       }
+
+       if ($request->has('data.email')) {
+        $admin->name = $request['data']['email'];
+       }
+
+       if ($request->has('data.role')) {
+        $admin->name = $request['data']['role'];
+       }
+
+          $admin->update();
+   
+        return $this->success(null, "Successfully updated", 200);
+
+       
+
+               
+    }
+
     public function search($adminCode)
     {
        
         // Find the admin, including trashed ones
         $admin = $this->admin->getAdminByAdminCode($adminCode);
         $resAdmin = AdminResource::make($admin);
-        return $this->success($admin, "success", 200);
+        return $this->success($resAdmin, "success", 200);
 
     }
 
@@ -122,6 +158,8 @@ class AdminController extends Controller
         }
 
         $accountDelete = $this->admin->updateAccountDelete($status, $adminCode);
+
+    
 
         if($accountDelete){
             $admin = $this->admin->getAdminByAdminCode($adminCode);
@@ -155,13 +193,13 @@ class AdminController extends Controller
          // Deactivate or reactivate based on the process
          if ($process === 'deactivate' && $status == 1) {
            
-            $updatedAdmin->delete(); // Soft delete
-            return $this->success($updatedAdmin, "Account is Deactivated", 200);
+            // $updatedAdmin->delete(); // Soft delete
+            return $this->success(AdminResource::make($updatedAdmin), "Account is Deactivated", 200);
         
         } elseif ($process === 'activate' && $status == 0) {
        
-            $updatedAdmin->restore(); // Restore
-            return $this->success($updatedAdmin, "Account is reactivated", 200);     
+            // $updatedAdmin->restore(); // Restore
+            return $this->success(AdminResource::make($updatedAdmin), "Account is reactivated", 200);     
         }
     }
 
