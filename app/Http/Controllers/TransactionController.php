@@ -24,8 +24,9 @@ class TransactionController extends Controller
 
     protected $transfer, $user, $depositWithdraw;
 
-    public function __construct(UserService $user, TransferService $transfer, DepositWithdrawService $depositWithdraw)
+    public function __construct(UserService $user,AdminServer $admin, TransferService $transfer, DepositWithdrawService $depositWithdraw)
     {
+        $this->admin = $admin;
         $this->user = $user;
         $this->transfer = $transfer;
         $this->depositWithdraw = $depositWithdraw;
@@ -223,6 +224,49 @@ class TransactionController extends Controller
             ]);
 
             $adminCode = $validated['data']['username'];
+        }
+
+
+
+        return response()->json([
+            'transactions'=>$orderTransactions
+
+        ]);
+
+    }
+
+    public function list($transferRequest)
+    {
+        if (isset($transferRequest->data['accountNo'])) {
+            $validated = $transferRequest->validate([
+                'data.accountNo'=> 'required'
+            ]);
+            $accountNo = $validated['data']['accountNo'];
+
+            $transfers = Transfer::where('sender',$accountNo)->get();
+
+
+
+            $withdraws = DepositWithdraw::where('process', 'withdraw')
+            ->orWhere('process', 'deposit')
+            ->where('accountNo',$accountNo)
+            ->get();
+
+
+
+            // $transactions = $withdraws->merge($transfers);
+              $transactions = collect(Arr::collapse([$transfers,$withdraws]));
+
+
+
+            $orderTransactions = $transactions->sortByDesc('created_at')->values()->all();
+
+        }else{
+            $validated = $transferRequest->validate([
+                'data.username'=> 'required'
+            ]);
+
+            $accountNo = $validated['data']['username'];
         }
 
 
