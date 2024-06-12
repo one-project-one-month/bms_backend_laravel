@@ -174,19 +174,21 @@ class TransactionController extends Controller
 
     public function adminlist($transferRequest)
     {
-        if (isset($transferRequest->data['accountNo'])) {
+        if (isset($transferRequest->data['adminCode'])) {
             $validated = $transferRequest->validate([
-                'data.accountNo'=> 'required'
+                'data.adminCode'=> 'required'
             ]);
-            $accountNo = $validated['data']['accountNo'];
+            $adminCode = $validated['data']['adminCode'];
 
-            $transfers = Transfer::where('sender',$accountNo)->get();
+            $admin = $this->admin->getAdminByAdminCode($adminCode);
+            $adminId = $admin->id;
+            $transfers = Transfer::where('adminId',$adminId)->get();
 
 
 
             $withdraws = DepositWithdraw::where('process', 'withdraw')
             ->orWhere('process', 'deposit')
-            ->where('accountNo',$accountNo)
+            ->where('adminId',$adminId)
             ->get();
 
 
@@ -203,7 +205,7 @@ class TransactionController extends Controller
                 'data.username'=> 'required'
             ]);
 
-            $accountNo = $validated['data']['username'];
+            $adminCode = $validated['data']['username'];
         }
 
 
