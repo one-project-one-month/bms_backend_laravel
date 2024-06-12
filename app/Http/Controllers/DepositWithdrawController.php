@@ -30,10 +30,15 @@ class DepositWithdrawController extends Controller
         $type = $request->transactionType;
 
         $user = $this->user->getUserByAccountNo($accountNo); // get user account data
-        if($user->isDeactivate || $user->isDelete){  // checking if the account is freeze or not
+        if($user->isDeactivate){  // checking if the account is freeze or not
             return response()->json([
                 'success' => false,
                 'message' => "Account was freeze!"
+            ]);
+        }else if($user->isDelete){
+            return response()->json([
+                'success' => false,
+                'message' => "The account has been already delete!"
             ]);
         }else{
             if($type == 'deposit'){
@@ -75,10 +80,15 @@ class DepositWithdrawController extends Controller
 
         $user = $this->user->getUserByAccountNo($accountNo);
 
-        if($user->isDeactivate && $user->isDelete){
+        if($user->isDeactivate){  // checking if the account is freeze or not
             return response()->json([
                 'success' => false,
                 'message' => "Account was freeze!"
+            ]);
+        }else if($user->isDelete){
+            return response()->json([
+                'success' => false,
+                'message' => "The account has been already delete!"
             ]);
         }else{
             $currentBalance = $user->balance;
