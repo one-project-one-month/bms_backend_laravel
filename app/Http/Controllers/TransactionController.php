@@ -9,6 +9,7 @@ use App\Http\Resources\TransferResource;
 use App\Http\Resources\UserResource;
 use App\Models\DepositWithdraw;
 use App\Models\Transfer;
+use App\Services\AdminService;
 use App\Services\DepositWithdrawService;
 use App\Services\TransferService;
 use App\Services\UserService;
@@ -22,9 +23,9 @@ class TransactionController extends Controller
 {
     use HttpResponses;
 
-    protected $transfer, $user, $depositWithdraw;
+    protected $transfer, $user, $depositWithdraw, $admin;
 
-    public function __construct(UserService $user,AdminServer $admin, TransferService $transfer, DepositWithdrawService $depositWithdraw)
+    public function __construct(UserService $user,AdminService $admin, TransferService $transfer, DepositWithdrawService $depositWithdraw)
     {
         $this->admin = $admin;
         $this->user = $user;
