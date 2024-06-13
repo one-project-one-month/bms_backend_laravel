@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepositWithdrawRequest;
+use Carbon\Carbon;
 
-use App\Http\Resources\DepositWithdrawResource;
-use App\Http\Resources\TransferResource;
-use App\Http\Resources\UserResource;
-use App\Models\DepositWithdraw;
 use App\Models\Transfer;
-use App\Services\DepositWithdrawService;
-use App\Services\TransferService;
+use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Traits\HttpResponses;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use App\Services\AdminService;
+use App\Models\DepositWithdraw;
+use App\Services\TransferService;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\TransferResource;
+use App\Services\DepositWithdrawService;
+use App\Http\Requests\DepositWithdrawRequest;
+use App\Http\Resources\DepositWithdrawResource;
 
 class TransactionController extends Controller
 {
@@ -24,7 +25,7 @@ class TransactionController extends Controller
 
     protected $transfer, $user, $depositWithdraw;
 
-    public function __construct(UserService $user,AdminServer $admin, TransferService $transfer, DepositWithdrawService $depositWithdraw)
+    public function __construct(UserService $user,AdminService $admin, TransferService $transfer, DepositWithdrawService $depositWithdraw)
     {
         $this->admin = $admin;
         $this->user = $user;
@@ -276,6 +277,17 @@ class TransactionController extends Controller
 
         ]);
 
+    }
+
+    public function transactionList(){
+        $transferList = Transfer::get();
+        $depositWithdrawList = DepositWithdraw::get();
+
+        $transactionList = collect(Arr::collapse([$transferList,$depositWithdrawList]));
+
+        $orderList = $transactionList->sortByDesc('created_at')->values()->all();
+
+        return $this->success('success',$orderList,200);
     }
 
     // public function checkStatus($accountNo)
