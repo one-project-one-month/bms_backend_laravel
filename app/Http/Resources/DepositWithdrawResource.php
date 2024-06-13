@@ -22,7 +22,6 @@ class DepositWithdrawResource extends JsonResource
             'accountNo' => $this->accountNo,
             'amount' => $this->amount,
             'transactionDate' => $this->created_at,
-            'user' => UserResource::make($this->user),
             'created_by'=> AdminResource::make($this->admin)
         ];
     }

@@ -40,7 +40,7 @@ class AdminController extends Controller
         DB::beginTransaction();
 
         try {
-           
+
             $data = $request->validated();
 
             $data['name'] = $request->name;
@@ -48,23 +48,23 @@ class AdminController extends Controller
             $data['adminCode'] = $this->generateUniqueCode('Adm');
             $data['password'] = Hash::make($request->password);
             $data['role'] = $request->role;
-            
+
             if($request->role !== 'admin')
             {
                 $data['managerId'] = Auth::user()->id;
             }
-    
+
              $adminSuccess = $this->admin->insert($data);
              $resAdmin = AdminResource::make($adminSuccess);
 
             DB::commit();
         } catch (\Throwable $th) {
-            
+
             DB::rollBack();
             throw $th;
-          
+
         }
-  
+
         // $resAdmin = $this->admin->getAdminByAdminCode($data['adminCode']);
 
         return  $this->success($resAdmin, 'success', 200);
@@ -72,7 +72,7 @@ class AdminController extends Controller
 
     public function accountActions(AccountActionRequest $request)
     {
-       
+
          // Ensure the authenticated user is an admin
          if (Auth::user()->role !== 'admin') {
             return response()->json(['message' => 'Sorry, Employee role cannot make this process'], 403);
@@ -81,13 +81,13 @@ class AdminController extends Controller
         $validated = $request->validated();
 
        $adminCode = $validated['data']['adminCode'];
-       $process = $validated['process'];    
+       $process = $validated['process'];
 
         switch ($process) {
             case "search":
                 return $this->search($adminCode);
             case 'activate':
-                return $this->deactivateOrActivate($adminCode, $process);   
+                return $this->deactivateOrActivate($adminCode, $process);
             case 'deactivate':
                 return $this->deactivateOrActivate($adminCode, $process);
             case 'delete':
@@ -123,17 +123,17 @@ class AdminController extends Controller
        }
 
           $admin->update();
-   
+
         return $this->success(null, "Successfully updated", 200);
 
-       
 
-               
+
+
     }
 
     public function search($adminCode)
     {
-       
+
         // Find the admin, including trashed ones
         $admin = $this->admin->getAdminByAdminCode($adminCode);
         $resAdmin = AdminResource::make($admin);
@@ -142,35 +142,30 @@ class AdminController extends Controller
     }
 
     public function accountDelete($adminCode, $process){
-      
+
         $status =  1;
-       
+
         $admin = $this->admin->getAdminByAdminCode($adminCode);
 
         if ($admin == null) {
             return response()->json(['message' => 'AdminCode cannot be found'], 404);
         }
 
-        if ($admin->isDeactivate === $status) {
-            return response()->json([
-                'message' => 'The account is already freezed'
-            ]);
-        }
 
         $accountDelete = $this->admin->updateAccountDelete($status, $adminCode);
 
-    
+
 
         if($accountDelete){
             $admin = $this->admin->getAdminByAdminCode($adminCode);
-            return $this->success($admin, "Account has bee freezed", 200);     
+            return $this->success($admin, "Account has bee freezed", 200);
         }
 
     }
 
     public function deactivateOrActivate($adminCode, $process)
     {
-       
+
         $process == "deactivate" ? $status = 1 : $status = 0 ;
 
          // Find the admin, including trashed ones
@@ -179,7 +174,7 @@ class AdminController extends Controller
          if ($admin == null) {
             return response()->json(['message' => 'AdminCode cannot be found'], 404);
         }
-     
+
         if ($admin->isDeactivate === $status) {
             return response()->json([
                 'message' => $status? 'The account is already Deactivated': 'The account is already activated'
@@ -192,14 +187,14 @@ class AdminController extends Controller
 
          // Deactivate or reactivate based on the process
          if ($process === 'deactivate' && $status == 1) {
-           
+
             // $updatedAdmin->delete(); // Soft delete
             return $this->success(AdminResource::make($updatedAdmin), "Account is Deactivated", 200);
-        
+
         } elseif ($process === 'activate' && $status == 0) {
-       
+
             // $updatedAdmin->restore(); // Restore
-            return $this->success(AdminResource::make($updatedAdmin), "Account is reactivated", 200);     
+            return $this->success(AdminResource::make($updatedAdmin), "Account is reactivated", 200);
         }
     }
 
