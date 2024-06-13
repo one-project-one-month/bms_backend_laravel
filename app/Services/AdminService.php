@@ -19,7 +19,7 @@ class AdminService extends CommonService
 
     public function getAdminByEmail($email)
     {
-        return $this->connection()->query()->withTrashed()->where('email', $email)->first();
+        return $this->connection()->query()->where('email', $email)->first();
 
     }
 
